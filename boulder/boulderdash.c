@@ -230,10 +230,11 @@ void hero_draw(int sourceX, int sourceY)
 
 int main()
 {
-    long frames;
-    long score;
-
-    const int maxFrame = 8;
+    /* INIT */
+    long frames = 0;
+    long score = 0;
+    int sourceX = 0, sourceY = 0;
+    bool done = false, redraw = true, active = false;
 
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
@@ -246,7 +247,6 @@ int main()
 
     disp_init();
     Direction direction = STOPPED;
-    int sourceX = 0, sourceY = 0;
 
     must_init(al_init_image_addon(), "image");
     sprites_init();
@@ -264,10 +264,6 @@ int main()
     keyboard_init();
     hero_init();
 
-    frames = 0;
-    score = 0;
-
-    bool done = false, redraw = true, active = false;
     ALLEGRO_EVENT event;
 
     al_start_timer(timer);
