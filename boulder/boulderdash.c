@@ -9,11 +9,6 @@
 
 /* GENERAL STUFF */
 
-long frames;
-long score;
-
-const int maxFrame = 8;
-
 void must_init(bool test, const char *description)
 {
     if (test)
@@ -126,32 +121,29 @@ void keyboard_update(ALLEGRO_EVENT *event)
 
 typedef struct SPRITES
 {
-    ALLEGRO_BITMAP *_sheet;
-
     ALLEGRO_BITMAP *hero;
 } SPRITES;
 SPRITES sprites;
 
-ALLEGRO_BITMAP *sprite_grab(int x, int y, int w, int h)
-{
-    ALLEGRO_BITMAP *sprite = al_create_sub_bitmap(sprites._sheet, x, y, w, h);
-    must_init(sprite, "sprite grab");
-    return sprite;
-}
-
 void sprites_init()
 {
-    sprites._sheet = al_load_bitmap("spritesheet.png");
-    must_init(sprites._sheet, "spritesheet");
-
-    sprites.hero = sprite_grab(0, 0, HERO_W, HERO_H);
+    sprites.hero = al_load_bitmap("sprites.png");
+    must_init(sprites.hero, "sprites");
 }
 
 void sprites_deinit()
 {
     al_destroy_bitmap(sprites.hero);
-    al_destroy_bitmap(sprites._sheet);
 }
+
+typedef enum Direction
+{
+    DOWN,
+    STOPPED,
+    UP,
+    LEFT,
+    RIGHT
+} Direction;
 
 #define HERO_SPEED 3
 #define HERO_MAX_X (BUFFER_W - HERO_W)
@@ -173,17 +165,50 @@ void hero_init()
     hero.y = (BUFFER_H / 2) - (HERO_H / 2);
 }
 
-void hero_update()
+void hero_update(int *sourceX, int *sourceY, bool *active, Direction direction)
 {
     /* movement */
     if (key[ALLEGRO_KEY_LEFT])
+    {
         hero.x -= HERO_SPEED;
-    if (key[ALLEGRO_KEY_RIGHT])
+        direction = LEFT;
+    }
+    else if (key[ALLEGRO_KEY_RIGHT])
+    {
         hero.x += HERO_SPEED;
-    if (key[ALLEGRO_KEY_UP])
+        direction = RIGHT;
+    }
+    else if (key[ALLEGRO_KEY_UP])
+    {
         hero.y -= HERO_SPEED;
-    if (key[ALLEGRO_KEY_DOWN])
+        direction = UP;
+    }
+    else if (key[ALLEGRO_KEY_DOWN])
+    {
         hero.y += HERO_SPEED;
+        direction = DOWN;
+    }
+    else
+    {
+        direction = STOPPED;
+        *active = false;
+    }
+
+    if (*active)
+    {
+        *sourceX += al_get_bitmap_width(sprites.hero) / 8;
+    }
+    else
+    {
+        *sourceX = 32;
+    }
+
+    if (*sourceX >= al_get_bitmap_width(sprites.hero))
+    {
+        *sourceX = 0;
+    }
+
+    *sourceY = direction;
 
     /* bounds */
     if (hero.x < 0)
@@ -196,13 +221,20 @@ void hero_update()
         hero.y = HERO_MAX_Y;
 }
 
-void hero_draw()
+void hero_draw(int sourceX, int sourceY)
 {
-    al_draw_bitmap(sprites.hero, hero.x, hero.y, 0);
+
+    al_draw_bitmap_region(sprites.hero, sourceX, sourceY * al_get_bitmap_height(sprites.hero) / 5, 32, 32, hero.x, hero.y, 0);
+
 }
 
 int main()
 {
+    long frames;
+    long score;
+
+    const int maxFrame = 8;
+
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
@@ -213,6 +245,8 @@ int main()
     must_init(queue, "queue");
 
     disp_init();
+    Direction direction = STOPPED;
+    int sourceX = 0, sourceY = 0;
 
     must_init(al_init_image_addon(), "image");
     sprites_init();
@@ -233,8 +267,7 @@ int main()
     frames = 0;
     score = 0;
 
-    bool done = false;
-    bool redraw = true;
+    bool done = false, redraw = true, active = false;
     ALLEGRO_EVENT event;
 
     al_start_timer(timer);
@@ -246,7 +279,8 @@ int main()
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-            hero_update();
+            active = true;
+            hero_update(&sourceX, &sourceY, &active, direction);
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
 
@@ -268,9 +302,7 @@ int main()
         {
             disp_pre_draw();
             al_clear_to_color(al_map_rgb(0, 0, 0));
-
-            hero_draw();
-
+            hero_draw(sourceX, sourceY);
             disp_post_draw();
             redraw = false;
         }

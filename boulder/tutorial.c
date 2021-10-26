@@ -26,9 +26,8 @@ int main(void)
 {
     ALLEGRO_DISPLAY *display;
 
-
     const int FPS = 60;
-    Direction direction = DOWN;
+    Direction direction = UP;
 
     if (!al_init())
     {
@@ -115,15 +114,24 @@ int main(void)
             {
                 sourceX = 0;
             }
+            /* bounds */
+            if (x < 0)
+                x = 0;
+            if (y < 0)
+                y = 0;
+            if (x > DISP_W)
+                x = DISP_W;
+            if (y > DISP_H)
+                y = DISP_H;
 
             sourceY = direction;
 
             redraw = true;
         }
 
-        if (redraw)
+        if (redraw && al_is_event_queue_empty(event_queue))
         {
-            al_draw_bitmap_region(player, sourceX, sourceY * al_get_bitmap_height(player)/4, 32, 32, x, y, 0);
+            al_draw_bitmap_region(player, sourceX, sourceY * al_get_bitmap_height(player) / 4, 32, 32, x, y, 0);
             al_flip_display();
             al_clear_to_color(al_map_rgb(0, 0, 0));
         }
