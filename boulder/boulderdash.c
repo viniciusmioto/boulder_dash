@@ -1,4 +1,4 @@
-#include "physics.h"
+#include "controls.h"
 
 int main()
 {
@@ -50,7 +50,7 @@ int main()
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-            move_hero(&hero, &sprites, key);
+            move_hero(&hero, &sprites, key, event.timer.count);
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
 

@@ -1,4 +1,4 @@
-#include "physics.h"
+#include "controls.h"
 
 /* It returns whether two squares will colide */
 bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2)
@@ -26,48 +26,43 @@ void hero_init(HERO *hero)
     hero->direction = STOPPED;
 }
 
-void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX])
+void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter)
 {
+    /* activate means that the hero must be drawn again at the display */
     hero->active = true;
-    /* movement */
-    if (key[ALLEGRO_KEY_LEFT])
-    {
-        hero->x -= HERO_SPEED;
-        hero->direction = LEFT;
-    }
-    else if (key[ALLEGRO_KEY_RIGHT])
-    {
-        hero->x += HERO_SPEED;
-        hero->direction = RIGHT;
-    }
-    else if (key[ALLEGRO_KEY_UP])
-    {
-        hero->y -= HERO_SPEED;
-        hero->direction = UP;
-    }
-    else if (key[ALLEGRO_KEY_DOWN])
-    {
-        hero->y += HERO_SPEED;
-        hero->direction = DOWN;
-    }
-    else
-    {
-        hero->direction = STOPPED;
-        // *active = false;
-    }
 
-    if (hero->active)
+    if (counter % 5 == 0)
     {
-        hero->sourceX += al_get_bitmap_width(sprites->hero) / 8;
-    }
-    else
-    {
-        hero->sourceX = 32;
-    }
+        if (key[ALLEGRO_KEY_LEFT])
+        {
+            hero->x -= HERO_SPEED;
+            hero->direction = LEFT;
+        }
+        else if (key[ALLEGRO_KEY_RIGHT])
+        {
+            hero->x += HERO_SPEED;
+            hero->direction = RIGHT;
+        }
+        else if (key[ALLEGRO_KEY_UP])
+        {
+            hero->y -= HERO_SPEED;
+            hero->direction = UP;
+        }
+        else if (key[ALLEGRO_KEY_DOWN])
+        {
+            hero->y += HERO_SPEED;
+            hero->direction = DOWN;
+        }
+        else
+            hero->direction = STOPPED;
 
-    if (hero->sourceX >= al_get_bitmap_width(sprites->hero))
-    {
-        hero->sourceX = 0;
+        if (hero->active)
+            hero->sourceX += al_get_bitmap_width(sprites->hero) / 8;
+        else
+            hero->sourceX = 32;
+
+        if (hero->sourceX >= al_get_bitmap_width(sprites->hero))
+            hero->sourceX = 0;
     }
 
     hero->sourceY = hero->direction;

@@ -1,4 +1,4 @@
-#include "animations.h"
+#include "display.h"
 
 void must_init(bool test, const char *description)
 {
