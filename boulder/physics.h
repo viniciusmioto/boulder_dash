@@ -26,7 +26,7 @@ typedef enum Direction
 
 typedef struct HERO
 {
-    int x, y, shot_timer, lives, respawn_timer, invincible_timer, sourceX, sourceY;
+    int x, y, lives, sourceX, sourceY;
     bool active;
     Direction direction;
 } HERO;

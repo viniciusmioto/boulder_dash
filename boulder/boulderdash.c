@@ -3,8 +3,10 @@
 int main()
 {
     /* INIT */
-    ALLEGRO_DISPLAY *display;
-    ALLEGRO_BITMAP *buffer;
+    ALLEGRO_DISPLAY *display = NULL;
+    ALLEGRO_BITMAP *buffer = NULL;
+    ALLEGRO_TIMER *timer = NULL;
+    ALLEGRO_EVENT_QUEUE *queue = NULL;
     HERO hero;
     SPRITES sprites;
     long frames = 0;
@@ -14,10 +16,10 @@ int main()
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
-    ALLEGRO_TIMER *timer = al_create_timer(1.0 / 60.0);
+    timer = al_create_timer(1.0 / 60.0);
     must_init(timer, "timer");
 
-    ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
+    queue = al_create_event_queue();
     must_init(queue, "queue");
 
     disp_init(&display, &buffer);
@@ -36,13 +38,13 @@ int main()
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
     keyboard_init(key);
-    hero_init(&hero);
 
     ALLEGRO_EVENT event;
 
     al_start_timer(timer);
+    hero_init(&hero);
 
-    while (1)
+    while (!done)
     {
         al_wait_for_event(queue, &event);
 

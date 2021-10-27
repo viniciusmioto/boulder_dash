@@ -17,19 +17,13 @@ bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int 
 
 void hero_init(HERO *hero)
 {
-    hero->x = (BUFFER_W / 2) - (HERO_W / 2);
-    hero->y = (BUFFER_H / 2) - (HERO_H / 2);
+    hero->x = 32;
+    hero->y = 32;
     hero->direction = STOPPED;
     hero->lives = 3;
     hero->sourceX = 0;
     hero->sourceY = 0;
     hero->active = false;
-}
-
-void hero_draw(HERO *hero, SPRITES *sprites)
-{
-
-    al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, 32, 32, hero->x, hero->y, 0);
 }
 
 void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX])
@@ -87,6 +81,11 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX])
         hero->x = HERO_MAX_X;
     if (hero->y > HERO_MAX_Y)
         hero->y = HERO_MAX_Y;
+}
+
+void hero_draw(HERO *hero, SPRITES *sprites)
+{
+    al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, 32, 32, hero->x, hero->y, 0);
 }
 
 void keyboard_init(unsigned char *key)

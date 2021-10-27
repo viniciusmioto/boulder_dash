@@ -50,5 +50,5 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-./boulder/tutorial
-./boulder/boulderdash
+/boulder/tutorial
+/boulder/boulderdash
