@@ -1,97 +1,78 @@
 #include "controls.h"
+/* ** All the following functions are recommended by the Allegro tutorial ** */
 
-/* It returns whether two squares will colide */
-bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2)
+/* Verify if an specific initialization went right */
+void must_init(bool test, const char *description)
 {
-    if (ax1 > bx2)
-        return false;
-    if (ax2 < bx1)
-        return false;
-    if (ay1 > by2)
-        return false;
-    if (ay2 < by1)
-        return false;
+    if (test)
+        return;
 
-    return true;
+    fprintf(stderr, "couldn't initialize %s\n", description);
+    exit(1);
 }
 
-void hero_init(HERO *hero)
+/* Initialize our sprites */
+void sprites_init(SPRITES *sprites, char fileName[100])
 {
-    hero->x = 32;
-    hero->y = 32;
-    hero->lives = 3;
-    hero->sourceX = 0;
-    hero->sourceY = 0;
-    hero->active = false;
-    hero->direction = STOPPED;
+    sprites->hero = al_load_bitmap(fileName);
+    must_init(sprites->hero, "sprites");
 }
 
-void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter)
+/* Free memory of sprites */
+void sprites_deinit(SPRITES *sprites)
 {
-    /* activate means that the hero must be drawn again at the display */
-    hero->active = true;
-
-    if (counter % 5 == 0)
-    {
-        if (key[ALLEGRO_KEY_LEFT])
-        {
-            hero->x -= HERO_SPEED;
-            hero->direction = LEFT;
-        }
-        else if (key[ALLEGRO_KEY_RIGHT])
-        {
-            hero->x += HERO_SPEED;
-            hero->direction = RIGHT;
-        }
-        else if (key[ALLEGRO_KEY_UP])
-        {
-            hero->y -= HERO_SPEED;
-            hero->direction = UP;
-        }
-        else if (key[ALLEGRO_KEY_DOWN])
-        {
-            hero->y += HERO_SPEED;
-            hero->direction = DOWN;
-        }
-        else
-            hero->direction = STOPPED;
-
-        if (hero->active)
-            hero->sourceX += al_get_bitmap_width(sprites->hero) / 8;
-        else
-            hero->sourceX = 32;
-
-        if (hero->sourceX >= al_get_bitmap_width(sprites->hero))
-            hero->sourceX = 0;
-    }
-
-    hero->sourceY = hero->direction;
-
-    /* bounds */
-    if (hero->x < 0)
-        hero->x = 0;
-    if (hero->y < 0)
-        hero->y = 0;
-    if (hero->x > HERO_MAX_X)
-        hero->x = HERO_MAX_X;
-    if (hero->y > HERO_MAX_Y)
-        hero->y = HERO_MAX_Y;
+    al_destroy_bitmap(sprites->hero);
 }
 
-void hero_draw(HERO *hero, SPRITES *sprites)
+/* Initialize our display */
+void disp_init(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
 {
-    al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, 32, 32, hero->x, hero->y, 0);
+    /* set our display */
+    al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
+    al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
+
+    /* create display and buffer */
+    *display = al_create_display(DISP_W, DISP_H);
+    must_init(*display, "display");
+
+    *buffer = al_create_bitmap(BUFFER_W, BUFFER_H);
+    must_init(*buffer, "bitmap buffer");
 }
 
+/* Free memory of display */
+void disp_deinit(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
+{
+    al_destroy_bitmap(*buffer);
+    al_destroy_display(*display);
+}
+
+/* Pre-draw the display (buffer) */
+void disp_pre_draw(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
+{
+    al_set_target_bitmap(*buffer);
+}
+
+/* Update the display (buffer) */
+void disp_post_draw(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
+{
+    al_set_target_backbuffer(*display);
+    al_draw_scaled_bitmap(*buffer, 0, 0, BUFFER_W, BUFFER_H, 0, 0, DISP_W, DISP_H, 0);
+    al_flip_display();
+}
+
+/* Initialize the keyboard */
 void keyboard_init(unsigned char *key)
 {
     memset(key, 0, sizeof(key));
 }
 
+/* Check for events updates with the keyboard (Allegro Template Function) */
 void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key)
 {
+    /* check if the key is pressed */
     if (event->type == ALLEGRO_EVENT_KEY_DOWN)
         key[event->keyboard.keycode] = 1;
+    /* check if the key is being held or released */
     else if (event->type == ALLEGRO_EVENT_KEY_UP)
     {
         switch (event->type)
@@ -110,14 +91,3 @@ void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key)
         }
     }
 }
-
-// we are not using these functions yet
-// int between(int min, int max)
-// {
-//     return min + (rand() % (max - min));
-// }
-
-// float between_f(float min, float max)
-// {
-//     return min + ((float)rand() / (float)RAND_MAX) * (max - min);
-// }

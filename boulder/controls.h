@@ -1,46 +1,48 @@
-#ifndef __PHYSICS__
-#define __PHYSICS__
+#ifndef __DISPLAY__
+#define __DISPLAY__
 
-#include "display.h"
+#include <stdio.h>
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
+#include <allegro5/allegro_image.h>
 
-#define HERO_W 32
-#define HERO_H 32
+/* width and heigh dimensions */
+#define BUFFER_W 1280
+#define BUFFER_H 736
 
-#define HERO_SPEED 32
-#define HERO_MAX_X (BUFFER_W - HERO_W)
-#define HERO_MAX_Y (BUFFER_H - HERO_H)
+/* we can modify this to change the size of the display */
+#define DISP_SCALE 1
+
+/* real size that is going to appear on the screen */
+#define DISP_W (BUFFER_W * DISP_SCALE)
+#define DISP_H (BUFFER_H * DISP_SCALE)
+
 
 /* KEYBOARD STUFF */
 #define KEY_SEEN 1
 #define KEY_RELEASED 2
 
-typedef enum Direction
+typedef struct SPRITES
 {
-    DOWN,
-    UP,
-    STOPPED,
-    LEFT,
-    RIGHT
-} Direction;
+    ALLEGRO_BITMAP *hero;
+} SPRITES;
 
-typedef struct HERO
-{
-    int x, y, lives, sourceX, sourceY;
-    bool active;
-    Direction direction;
-} HERO;
+void must_init(bool test, const char *description);
 
-bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2);
-
-void sprites_init(SPRITES *sprites);
+void sprites_init(SPRITES *sprites, char fileName[100]);
 
 void sprites_deinit(SPRITES *sprites);
 
-void hero_init(HERO *hero);
+void disp_init(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer);
 
-void hero_draw(HERO *hero, SPRITES *sprites);
+void disp_deinit(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer);
 
-void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter);
+void disp_pre_draw(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer);
+
+void disp_post_draw(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer);
 
 void keyboard_init(unsigned char *key);
 

@@ -1,4 +1,4 @@
-#include "controls.h"
+#include "physics.h"
 
 int main()
 {
@@ -41,7 +41,7 @@ int main()
     al_start_timer(timer);
     hero_init(&hero);
     keyboard_init(key);
-    sprites_init(&sprites);
+    sprites_init(&sprites, "sprites.png");
 
     while (!done)
     {
