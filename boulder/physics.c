@@ -91,6 +91,11 @@ void hero_draw(HERO *hero, SPRITES *sprites)
 {
     /* it gets the a specific region of the spritesheet by using sourceX and sourceY */
     al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
+
+    // if eateregg is true
+    // al_draw_tinted_bitmap_region(sprites->hero, al_map_rgb(255,255,128),hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
+    // increase speed
+
 }
 
 // we are not using these functions yet
