@@ -1,13 +1,7 @@
 #ifndef __PHYSICS__
 #define __PHYSICS__
 
-#include <stdio.h>
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_audio.h>
-#include <allegro5/allegro_acodec.h>
-#include <allegro5/allegro_image.h>
+#include "animations.h"
 
 /* DISPLAY STUFF */
 
@@ -46,11 +40,6 @@ typedef struct HERO
     Direction direction;
 } HERO;
 
-typedef struct SPRITES
-{
-    ALLEGRO_BITMAP *hero;
-} SPRITES;
-
 bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2);
 
 void sprites_init(SPRITES *sprites);
@@ -62,5 +51,9 @@ void hero_init(HERO *hero);
 void hero_draw(HERO *hero, SPRITES *sprites);
 
 void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX]);
+
+void keyboard_init(unsigned char *key);
+
+void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key);
 
 #endif

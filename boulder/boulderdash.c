@@ -2,27 +2,6 @@
 
 ALLEGRO_DISPLAY *display;
 ALLEGRO_BITMAP *buffer;
-unsigned char key[ALLEGRO_KEY_MAX];
-
-void must_init(bool test, const char *description)
-{
-    if (test)
-        return;
-
-    fprintf(stderr, "couldn't initialize %s\n", description);
-    exit(1);
-}
-
-void sprites_init(SPRITES *sprites)
-{
-    sprites->hero = al_load_bitmap("sprites.png");
-    must_init(sprites->hero, "sprites");
-}
-
-void sprites_deinit(SPRITES *sprites)
-{
-    al_destroy_bitmap(sprites->hero);
-}
 
 void disp_init()
 {
@@ -54,29 +33,6 @@ void disp_post_draw()
     al_flip_display();
 }
 
-void keyboard_init()
-{
-    memset(key, 0, sizeof(key));
-}
-
-void keyboard_update(ALLEGRO_EVENT *event)
-{
-    switch (event->type)
-    {
-    case ALLEGRO_EVENT_TIMER:
-        for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
-            key[i] &= KEY_SEEN;
-        break;
-
-    case ALLEGRO_EVENT_KEY_DOWN:
-        key[event->keyboard.keycode] = KEY_SEEN | KEY_RELEASED;
-        break;
-    case ALLEGRO_EVENT_KEY_UP:
-        key[event->keyboard.keycode] &= KEY_RELEASED;
-        break;
-    }
-}
-
 int main()
 {
     /* INIT */
@@ -84,6 +40,7 @@ int main()
     SPRITES sprites;
     long frames = 0;
     bool done = false, redraw = true;
+    unsigned char key[ALLEGRO_KEY_MAX];
 
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
@@ -109,7 +66,7 @@ int main()
     al_register_event_source(queue, al_get_display_event_source(display));
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
-    keyboard_init();
+    keyboard_init(key);
     hero_init(&hero);
 
     ALLEGRO_EVENT event;
@@ -139,7 +96,7 @@ int main()
         if (done)
             break;
 
-        keyboard_update(&event);
+        keyboard_update(&event, key);
 
         if (redraw && al_is_event_queue_empty(queue))
         {

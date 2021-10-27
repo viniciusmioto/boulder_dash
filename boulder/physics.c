@@ -1,5 +1,6 @@
 #include "physics.h"
 
+/* It returns whether two squares will colide */
 bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2)
 {
     if (ax1 > bx2)
@@ -13,7 +14,6 @@ bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int 
 
     return true;
 }
-
 
 void hero_init(HERO *hero)
 {
@@ -30,7 +30,6 @@ void hero_draw(HERO *hero, SPRITES *sprites)
 {
 
     al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, 32, 32, hero->x, hero->y, 0);
-
 }
 
 void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX])
@@ -88,7 +87,34 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX])
         hero->x = HERO_MAX_X;
     if (hero->y > HERO_MAX_Y)
         hero->y = HERO_MAX_Y;
+}
 
+void keyboard_init(unsigned char *key)
+{
+    memset(key, 0, sizeof(key));
+}
+
+void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key)
+{
+    if (event->type == ALLEGRO_EVENT_KEY_DOWN)
+        key[event->keyboard.keycode] = 1;
+    else if (event->type == ALLEGRO_EVENT_KEY_UP)
+    {
+        switch (event->type)
+        {
+        case ALLEGRO_EVENT_TIMER:
+            for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
+                key[i] &= KEY_SEEN;
+            break;
+
+        case ALLEGRO_EVENT_KEY_DOWN:
+            key[event->keyboard.keycode] = KEY_SEEN | KEY_RELEASED;
+            break;
+        case ALLEGRO_EVENT_KEY_UP:
+            key[event->keyboard.keycode] &= KEY_RELEASED;
+            break;
+        }
+    }
 }
 
 // we are not using these functions yet
