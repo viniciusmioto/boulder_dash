@@ -86,15 +86,27 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
     hero->active = false;
 }
 
-/* Animate the hero */
+int verify_easter_egg(HERO *hero, unsigned char key[ALLEGRO_KEY_MAX])
+{
+    if (key[ALLEGRO_KEY_R])
+        hero->easteregg = 1;
+    if (hero->easteregg == 1 && key[ALLEGRO_KEY_O])
+        hero->easteregg = 2;
+    if (hero->easteregg == 2 && key[ALLEGRO_KEY_C])
+        hero->easteregg = 3;
+    if (hero->easteregg == 3 && key[ALLEGRO_KEY_K])
+        hero->easteregg = 4;
+}
+
+/* Draw and animate the hero on display */
 void hero_draw(HERO *hero, SPRITES *sprites)
 {
     /* it gets the a specific region of the spritesheet by using sourceX and sourceY */
-    al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
 
-    // if eateregg is true
-    // al_draw_tinted_bitmap_region(sprites->hero, al_map_rgb(255,255,128),hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
-    // increase speed
+    if (hero->easteregg == 4)
+        al_draw_tinted_bitmap_region(sprites->hero, al_map_rgb(255,0,255),hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
+    else
+        al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
 
 }
 
