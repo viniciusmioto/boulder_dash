@@ -44,6 +44,7 @@ int main()
     keyboard_init(key);
     sprites_init(&sprites, "sprites.png");
 
+    /* MAIN LOOP */
     while (!done)
     {
         al_wait_for_event(queue, &event);
