@@ -19,11 +19,11 @@ void hero_init(HERO *hero)
 {
     hero->x = 32;
     hero->y = 32;
-    hero->direction = STOPPED;
     hero->lives = 3;
     hero->sourceX = 0;
     hero->sourceY = 0;
     hero->active = false;
+    hero->direction = STOPPED;
 }
 
 void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX])

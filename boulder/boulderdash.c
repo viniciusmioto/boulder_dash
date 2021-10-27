@@ -25,7 +25,6 @@ int main()
     disp_init(&display, &buffer);
 
     must_init(al_init_image_addon(), "image");
-    sprites_init(&sprites);
 
     must_init(al_init_primitives_addon(), "primitives");
 
@@ -37,12 +36,12 @@ int main()
     al_register_event_source(queue, al_get_display_event_source(display));
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
-    keyboard_init(key);
-
     ALLEGRO_EVENT event;
 
     al_start_timer(timer);
     hero_init(&hero);
+    keyboard_init(key);
+    sprites_init(&sprites);
 
     while (!done)
     {
