@@ -14,12 +14,90 @@ bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int 
     return true;
 }
 
-int between(int min, int max)
+
+void hero_init(HERO *hero)
 {
-    return min + (rand() % (max - min));
+    hero->x = (BUFFER_W / 2) - (HERO_W / 2);
+    hero->y = (BUFFER_H / 2) - (HERO_H / 2);
+    hero->direction = STOPPED;
+    hero->lives = 3;
+    hero->sourceX = 0;
+    hero->sourceY = 0;
+    hero->active = false;
 }
 
-float between_f(float min, float max)
+void hero_draw(HERO *hero, SPRITES *sprites)
 {
-    return min + ((float)rand() / (float)RAND_MAX) * (max - min);
+
+    al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, 32, 32, hero->x, hero->y, 0);
+
 }
+
+void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX])
+{
+    hero->active = true;
+    /* movement */
+    if (key[ALLEGRO_KEY_LEFT])
+    {
+        hero->x -= HERO_SPEED;
+        hero->direction = LEFT;
+    }
+    else if (key[ALLEGRO_KEY_RIGHT])
+    {
+        hero->x += HERO_SPEED;
+        hero->direction = RIGHT;
+    }
+    else if (key[ALLEGRO_KEY_UP])
+    {
+        hero->y -= HERO_SPEED;
+        hero->direction = UP;
+    }
+    else if (key[ALLEGRO_KEY_DOWN])
+    {
+        hero->y += HERO_SPEED;
+        hero->direction = DOWN;
+    }
+    else
+    {
+        hero->direction = STOPPED;
+        // *active = false;
+    }
+
+    if (hero->active)
+    {
+        hero->sourceX += al_get_bitmap_width(sprites->hero) / 8;
+    }
+    else
+    {
+        hero->sourceX = 32;
+    }
+
+    if (hero->sourceX >= al_get_bitmap_width(sprites->hero))
+    {
+        hero->sourceX = 0;
+    }
+
+    hero->sourceY = hero->direction;
+
+    /* bounds */
+    if (hero->x < 0)
+        hero->x = 0;
+    if (hero->y < 0)
+        hero->y = 0;
+    if (hero->x > HERO_MAX_X)
+        hero->x = HERO_MAX_X;
+    if (hero->y > HERO_MAX_Y)
+        hero->y = HERO_MAX_Y;
+
+}
+
+// we are not using these functions yet
+// int between(int min, int max)
+// {
+//     return min + (rand() % (max - min));
+// }
+
+// float between_f(float min, float max)
+// {
+//     return min + ((float)rand() / (float)RAND_MAX) * (max - min);
+// }
