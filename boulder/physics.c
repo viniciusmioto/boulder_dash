@@ -23,6 +23,7 @@ void hero_init(HERO *hero)
     hero->lives = 3;
     hero->sourceX = 0;
     hero->sourceY = 0;
+    hero->easteregg = 0;
     hero->active = false;
     hero->direction = STOPPED;
 }
