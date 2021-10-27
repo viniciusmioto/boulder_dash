@@ -12,6 +12,7 @@ int main()
     long frames = 0;
     bool done = false, redraw = true;
     unsigned char key[ALLEGRO_KEY_MAX];
+    int activate_easter_egg = 0;
 
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
@@ -51,6 +52,7 @@ int main()
         {
         case ALLEGRO_EVENT_TIMER:
             move_hero(&hero, &sprites, key, event.timer.count);
+            verify_easter_egg(&hero, key);
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
 
