@@ -12,16 +12,19 @@ void must_init(bool test, const char *description)
 }
 
 /* Initialize our sprites */
-void sprites_init(SPRITES *sprites, char fileName[100])
+void sprites_init(SPRITES *sprites)
 {
-    sprites->hero = al_load_bitmap(fileName);
+    sprites->hero = al_load_bitmap("hero-sprites.png");
+    sprites->map = al_load_bitmap("map-sprites.png");
     must_init(sprites->hero, "sprites");
+    must_init(sprites->map, "sprites");
 }
 
 /* Free memory of sprites */
 void sprites_deinit(SPRITES *sprites)
 {
     al_destroy_bitmap(sprites->hero);
+    // al_destroy_bitmap(sprites->map);
 }
 
 /* Initialize our display */
@@ -91,3 +94,60 @@ void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key)
         }
     }
 }
+
+void loadMap(const char *fileName, int map[10][10])
+{
+    int i = 0, j = 0;
+    char c;
+
+    FILE *file = fopen(fileName, "r");
+    if (file == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    i = 0, j = 0;
+    while ((c = fgetc(file)) != EOF)
+    {
+        if (c == '\n')
+        {
+            i++;
+            j = 0;
+        }
+        else if(c != ' ')
+        {
+            map[i][j] = c - '0';
+            j++;
+        }
+    }
+
+    for (i = 0; i < 10; i++) {
+        for (j = 0; j < 10; j++) {
+            printf("%d ", map[i][j]);
+        }
+        printf("\n");
+    }
+
+    fclose(file);
+}
+
+void draw_map(int map[10][10], SPRITES *sprites)
+{
+    int i, j;
+    for (i = 0; i < 10; i++)
+    {
+        for (j = 0; j < 10; j++)
+        {
+            if (map[i][j] == 1)
+            {
+                al_draw_bitmap_region(sprites->map, 0, 0 * al_get_bitmap_height(sprites->map) / 1, TILE_SIZE, TILE_SIZE, i, j, 0);
+            }
+            else if (map[i][j] == 2)
+            {
+                al_draw_bitmap_region(sprites->map, 32, 0 * al_get_bitmap_height(sprites->map) / 1, TILE_SIZE, TILE_SIZE, i, j, 0);
+            }
+        }
+    }
+}
+

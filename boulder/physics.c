@@ -18,8 +18,8 @@ bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int 
 /* Initialize hero (Rockford) attributes */
 void hero_init(HERO *hero)
 {
-    hero->x = 32;
-    hero->y = 32;
+    hero->x = DISP_W / 2;
+    hero->y =DISP_H / 2;
     hero->lives = 3;
     hero->sourceX = 0;
     hero->sourceY = 0;
@@ -110,14 +110,3 @@ void hero_draw(HERO *hero, SPRITES *sprites)
         al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
 
 }
-
-// we are not using these functions yet
-// int between(int min, int max)
-// {
-//     return min + (rand() % (max - min));
-// }
-
-// float between_f(float min, float max)
-// {
-//     return min + ((float)rand() / (float)RAND_MAX) * (max - min);
-// }

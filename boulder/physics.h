@@ -23,6 +23,7 @@ typedef struct HERO
 {
     int x, y, lives, sourceX, sourceY, easteregg;
     bool active;
+    ALLEGRO_BITMAP *sprites;
     Direction direction;
 } HERO;
 

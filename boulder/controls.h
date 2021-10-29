@@ -20,6 +20,9 @@
 #define DISP_W (BUFFER_W * DISP_SCALE)
 #define DISP_H (BUFFER_H * DISP_SCALE)
 
+/* tile objects */
+#define TILE_SIZE 32
+
 
 /* KEYBOARD STUFF */
 #define KEY_SEEN 1
@@ -28,11 +31,12 @@
 typedef struct SPRITES
 {
     ALLEGRO_BITMAP *hero;
+    ALLEGRO_BITMAP *map;
 } SPRITES;
 
 void must_init(bool test, const char *description);
 
-void sprites_init(SPRITES *sprites, char fileName[100]);
+void sprites_init(SPRITES *sprites);
 
 void sprites_deinit(SPRITES *sprites);
 
@@ -47,5 +51,9 @@ void disp_post_draw(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer);
 void keyboard_init(unsigned char *key);
 
 void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key);
+
+void loadMap(const char *fileName, int map[10][10]);
+
+void draw_map(int map[10][10], SPRITES *sprites);
 
 #endif
