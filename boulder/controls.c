@@ -152,11 +152,11 @@ void draw_map(int map[23][40], SPRITES *sprites)
 {
     int i, j;
     
-    for (i = 1; i < 23; i++)
+    for (i = 0; i < 23; i++)
     {
         for (j = 0; j < 40; j++)
         {
-            switch (map[i-1][j])
+            switch (map[i][j])
             {
             case 1:
                 al_draw_bitmap(sprites->dirt, TILE_SIZE * j, TILE_SIZE * i, 0);
