@@ -3,16 +3,17 @@
 int main()
 {
     /* INIT */
+    HERO hero;
+    SPRITES sprites;
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_BITMAP *buffer = NULL;
     ALLEGRO_TIMER *timer = NULL;
     ALLEGRO_EVENT_QUEUE *queue = NULL;
-    HERO hero;
-    SPRITES sprites;
     long frames = 0;
     bool done = false, redraw = true;
     unsigned char key[ALLEGRO_KEY_MAX];
-    int activate_easter_egg = 0;
+    int activate_easter_egg = 0, loadCounterX = 0, loadCounterY = 0, mapSizeX = 0, mapSizeY = 0;
+    int map[23][40];
 
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
@@ -42,7 +43,9 @@ int main()
     al_start_timer(timer);
     hero_init(&hero);
     keyboard_init(key);
-    sprites_init(&sprites, "sprites.png");
+    sprites_init(&sprites);
+
+    loadMap("map.txt", map);
 
     /* MAIN LOOP */
     while (!done)
@@ -52,7 +55,7 @@ int main()
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-            move_hero(&hero, &sprites, key, event.timer.count);
+            move_hero(&hero, &sprites, key, event.timer.count, map);
             verify_easter_egg(&hero, key);
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;
@@ -75,6 +78,7 @@ int main()
         {
             disp_pre_draw(&display, &buffer);
             al_clear_to_color(al_map_rgb(0, 0, 0));
+            draw_map(map, &sprites);
             hero_draw(&hero, &sprites);
             disp_post_draw(&display, &buffer);
             redraw = false;
