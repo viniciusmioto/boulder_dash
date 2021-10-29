@@ -30,8 +30,13 @@
 
 typedef struct SPRITES
 {
+    ALLEGRO_BITMAP *_spritesheet;
     ALLEGRO_BITMAP *hero;
-    ALLEGRO_BITMAP *map;
+    ALLEGRO_BITMAP *diamond;
+    ALLEGRO_BITMAP *boulder;
+    ALLEGRO_BITMAP *dirt;
+    ALLEGRO_BITMAP *wall;
+    ALLEGRO_BITMAP *brick;
 } SPRITES;
 
 void must_init(bool test, const char *description);
@@ -52,8 +57,8 @@ void keyboard_init(unsigned char *key);
 
 void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key);
 
-void loadMap(const char *fileName, int map[10][10]);
+void loadMap(const char *fileName, int map[23][40]);
 
-void draw_map(int map[10][10], SPRITES *sprites);
+void draw_map(int map[23][40], SPRITES *sprites);
 
 #endif

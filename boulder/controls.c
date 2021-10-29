@@ -1,5 +1,5 @@
 #include "controls.h"
-/* ** All the following functions are recommended by the Allegro tutorial ** */
+/* ** All the following functions are designed and recommended by the Allegro tutorial ** */
 
 /* Verify if an specific initialization went right */
 void must_init(bool test, const char *description)
@@ -11,13 +11,36 @@ void must_init(bool test, const char *description)
     exit(1);
 }
 
+ALLEGRO_BITMAP *sprite_grab(SPRITES *sprites, int x, int y, int w, int h)
+{
+    ALLEGRO_BITMAP *sprite = al_create_sub_bitmap(sprites->_spritesheet, x, y, w, h);
+    return sprite;
+}
+
 /* Initialize our sprites */
 void sprites_init(SPRITES *sprites)
 {
-    sprites->hero = al_load_bitmap("hero-sprites.png");
-    sprites->map = al_load_bitmap("map-sprites.png");
-    must_init(sprites->hero, "sprites");
-    must_init(sprites->map, "sprites");
+    sprites->_spritesheet = al_load_bitmap("spritesheet.png");
+    must_init(sprites->_spritesheet, "map sprites");
+
+    sprites->hero = sprite_grab(sprites, 0, TILE_SIZE, TILE_SIZE * 8, TILE_SIZE * 5);
+    must_init(sprites->hero, "map sprites - Rockford");
+
+    sprites->diamond = sprite_grab(sprites, 0, TILE_SIZE * 10, TILE_SIZE * 8, TILE_SIZE);
+    must_init(sprites->diamond, "map sprites - diamonds");
+
+    sprites->boulder = sprite_grab(sprites, 0, TILE_SIZE * 7, TILE_SIZE, TILE_SIZE);
+    must_init(sprites->boulder, "map sprites - boulder");
+
+    sprites->dirt = sprite_grab(sprites, TILE_SIZE, TILE_SIZE * 7, TILE_SIZE, TILE_SIZE);
+    must_init(sprites->dirt, "sprites - dirt");
+
+    sprites->brick = sprite_grab(sprites, TILE_SIZE, TILE_SIZE * 6, TILE_SIZE, TILE_SIZE);
+    must_init(sprites->brick, "sprites - brick");
+
+    sprites->wall = sprite_grab(sprites, TILE_SIZE * 3, TILE_SIZE * 6, TILE_SIZE, TILE_SIZE);
+    must_init(sprites->wall, "sprites - wall");
+
 }
 
 /* Free memory of sprites */
@@ -95,7 +118,7 @@ void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key)
     }
 }
 
-void loadMap(const char *fileName, int map[10][10])
+void loadMap(const char *fileName, int map[23][40])
 {
     int i = 0, j = 0;
     char c;
@@ -115,39 +138,44 @@ void loadMap(const char *fileName, int map[10][10])
             i++;
             j = 0;
         }
-        else if(c != ' ')
+        else if (c != ' ')
         {
             map[i][j] = c - '0';
             j++;
         }
     }
 
-    for (i = 0; i < 10; i++) {
-        for (j = 0; j < 10; j++) {
-            printf("%d ", map[i][j]);
-        }
-        printf("\n");
-    }
-
     fclose(file);
 }
 
-void draw_map(int map[10][10], SPRITES *sprites)
+void draw_map(int map[23][40], SPRITES *sprites)
 {
     int i, j;
-    for (i = 0; i < 10; i++)
+    
+    for (i = 1; i < 23; i++)
     {
-        for (j = 0; j < 10; j++)
+        for (j = 0; j < 40; j++)
         {
-            if (map[i][j] == 1)
+            switch (map[i-1][j])
             {
-                al_draw_bitmap_region(sprites->map, 0, 0 * al_get_bitmap_height(sprites->map) / 1, TILE_SIZE, TILE_SIZE, i, j, 0);
-            }
-            else if (map[i][j] == 2)
-            {
-                al_draw_bitmap_region(sprites->map, 32, 0 * al_get_bitmap_height(sprites->map) / 1, TILE_SIZE, TILE_SIZE, i, j, 0);
+            case 1:
+                al_draw_bitmap(sprites->dirt, TILE_SIZE * j, TILE_SIZE * i, 0);
+                break;
+            case 2:
+                al_draw_bitmap(sprites->boulder, TILE_SIZE * j, TILE_SIZE * i, 0);
+                break;
+            case 3:
+                al_draw_bitmap(sprites->brick, TILE_SIZE * j, TILE_SIZE * i, 0);
+                break;
+            case 4:
+                al_draw_bitmap(sprites->wall, TILE_SIZE * j, TILE_SIZE * i, 0);
+                break;
+            case 5:
+                al_draw_bitmap_region(sprites->diamond, 0, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                break;
+            default:
+                break;
             }
         }
     }
 }
-

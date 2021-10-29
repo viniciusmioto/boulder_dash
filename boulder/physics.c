@@ -18,8 +18,8 @@ bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int 
 /* Initialize hero (Rockford) attributes */
 void hero_init(HERO *hero)
 {
-    hero->x = DISP_W / 2;
-    hero->y =DISP_H / 2;
+    hero->x = HERO_H * 3;
+    hero->y = HERO_W * 3;
     hero->lives = 3;
     hero->sourceX = 0;
     hero->sourceY = 0;
@@ -108,5 +108,4 @@ void hero_draw(HERO *hero, SPRITES *sprites)
         al_draw_tinted_bitmap_region(sprites->hero, al_map_rgb(255,0,255),hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
     else
         al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
-
 }
