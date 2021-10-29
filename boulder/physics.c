@@ -30,9 +30,11 @@ void hero_init(HERO *hero)
 
 bool object_collision(HERO *hero, int map[23][40], int x, int y)
 {
-    printf("X: %d Y: %d\n", hero->mapX, hero->mapY);
     if (map[y][x] == 0 || map[y][x] == 1)
+    {
+        map[y][x] = 0;
         return false;
+    }
     else
         return true;
 }
@@ -52,7 +54,6 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (object_collision(hero, map, hero->mapX - 1, hero->mapY))
             {
                 hero->direction = STOPPED;
-                printf("Collision!\n");
                 return;
             }
             else
@@ -66,7 +67,6 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (object_collision(hero, map, hero->mapX + 1, hero->mapY))
             {
                 hero->direction = STOPPED;
-                printf("Collision!\n");
                 return;
             }
             else
@@ -80,7 +80,6 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (object_collision(hero, map, hero->mapX, hero->mapY - 1))
             {
                 hero->direction = STOPPED;
-                printf("Collision!\n");
                 return;
             }
             else
@@ -94,7 +93,6 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (object_collision(hero, map, hero->mapX, hero->mapY + 1))
             {
                 hero->direction = STOPPED;
-                printf("Collision!\n");
                 return;
             }
             else
