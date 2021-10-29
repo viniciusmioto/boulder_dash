@@ -28,19 +28,13 @@ void hero_init(HERO *hero)
     hero->direction = STOPPED;
 }
 
-/* show hero position in the map */
-void hero_map_postion(HERO *hero, int map[23][40])
+bool object_collision(HERO *hero, int map[23][40], int x, int y)
 {
-    printf("i: %d j: %d\n", hero->mapX, hero->mapY);
-    printf("Obj: %d\n", map[hero->mapX][hero->mapY]);
-}
-
-bool object_collision(HERO *hero, int map[23][40], int i, int j)
-{
-    if (map[i][j] == 0 || map[hero->mapX][hero->mapY] == 1)
+    printf("X: %d Y: %d\n", hero->mapX, hero->mapY);
+    if (map[y][x] == 0 || map[y][x] == 1)
         return false;
     else
-        return false;
+        return true;
 }
 
 /* Movements with arrow keys and animations with sprites */
@@ -50,7 +44,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
     hero->active = true;
 
     /* the counter delay allows us to make the animations and movements more fluidly */
-    if (counter % 5 == 0)
+    if (counter % 6 == 0)
     {
         /* check which key is being pressed */
         if (key[ALLEGRO_KEY_LEFT])
@@ -58,6 +52,8 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (object_collision(hero, map, hero->mapX - 1, hero->mapY))
             {
                 hero->direction = STOPPED;
+                printf("Collision!\n");
+                return;
             }
             else
             {
@@ -70,6 +66,8 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (object_collision(hero, map, hero->mapX + 1, hero->mapY))
             {
                 hero->direction = STOPPED;
+                printf("Collision!\n");
+                return;
             }
             else
             {
@@ -82,6 +80,8 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (object_collision(hero, map, hero->mapX, hero->mapY - 1))
             {
                 hero->direction = STOPPED;
+                printf("Collision!\n");
+                return;
             }
             else
             {
@@ -94,6 +94,8 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (object_collision(hero, map, hero->mapX, hero->mapY + 1))
             {
                 hero->direction = STOPPED;
+                printf("Collision!\n");
+                return;
             }
             else
             {
@@ -115,7 +117,6 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             hero->sourceX = 0;
 
         hero->sourceY = hero->direction;
-        hero_map_postion(hero, map);
     }
 
     /* check if the hero is inside the map */
@@ -128,6 +129,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
     if (hero->mapY > 22)
         hero->mapY = 22;
     
+    object_collision(hero, map, hero->mapX, hero->mapY);
 
     hero->active = false;
 }
