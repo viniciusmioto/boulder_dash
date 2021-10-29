@@ -55,7 +55,7 @@ int main()
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-            move_hero(&hero, &sprites, key, event.timer.count);
+            move_hero(&hero, &sprites, key, event.timer.count, map);
             verify_easter_egg(&hero, key);
             if (key[ALLEGRO_KEY_ESCAPE])
                 done = true;

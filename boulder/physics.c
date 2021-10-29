@@ -18,18 +18,33 @@ bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int 
 /* Initialize hero (Rockford) attributes */
 void hero_init(HERO *hero)
 {
-    hero->x = HERO_H * 3;
-    hero->y = HERO_W * 3;
     hero->lives = 3;
     hero->sourceX = 0;
     hero->sourceY = 0;
+    hero->mapX = 3;
+    hero->mapY = 3;
     hero->easteregg = 0;
     hero->active = false;
     hero->direction = STOPPED;
 }
 
+/* show hero position in the map */
+void hero_map_postion(HERO *hero, int map[23][40])
+{
+    printf("i: %d j: %d\n", hero->mapX, hero->mapY);
+    printf("Obj: %d\n", map[hero->mapX][hero->mapY]);
+}
+
+bool object_collision(HERO *hero, int map[23][40], int i, int j)
+{
+    if (map[i][j] == 0 || map[hero->mapX][hero->mapY] == 1)
+        return false;
+    else
+        return false;
+}
+
 /* Movements with arrow keys and animations with sprites */
-void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter)
+void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter, int map[23][40])
 {
     /* activate means that the hero must be drawn again at the display */
     hero->active = true;
@@ -40,23 +55,51 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         /* check which key is being pressed */
         if (key[ALLEGRO_KEY_LEFT])
         {
-            hero->x -= HERO_SPEED;
-            hero->direction = LEFT;
+            if (object_collision(hero, map, hero->mapX - 1, hero->mapY))
+            {
+                hero->direction = STOPPED;
+            }
+            else
+            {
+                hero->mapX--;
+                hero->direction = LEFT;
+            }
         }
         else if (key[ALLEGRO_KEY_RIGHT])
         {
-            hero->x += HERO_SPEED;
-            hero->direction = RIGHT;
+            if (object_collision(hero, map, hero->mapX + 1, hero->mapY))
+            {
+                hero->direction = STOPPED;
+            }
+            else
+            {
+                hero->mapX++;
+                hero->direction = RIGHT;
+            }
         }
         else if (key[ALLEGRO_KEY_UP])
         {
-            hero->y -= HERO_SPEED;
-            hero->direction = UP;
+            if (object_collision(hero, map, hero->mapX, hero->mapY - 1))
+            {
+                hero->direction = STOPPED;
+            }
+            else
+            {
+                hero->mapY--;
+                hero->direction = UP;
+            }
         }
         else if (key[ALLEGRO_KEY_DOWN])
         {
-            hero->y += HERO_SPEED;
-            hero->direction = DOWN;
+            if (object_collision(hero, map, hero->mapX, hero->mapY + 1))
+            {
+                hero->direction = STOPPED;
+            }
+            else
+            {
+                hero->mapY++;
+                hero->direction = DOWN;
+            }
         }
         /* no key is pressed */
         else
@@ -72,17 +115,19 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             hero->sourceX = 0;
 
         hero->sourceY = hero->direction;
+        hero_map_postion(hero, map);
     }
 
-    /* check if the hero is out of the screen by our bounds */
-    if (hero->x < 0)
-        hero->x = 0;
-    if (hero->y < 0)
-        hero->y = 0;
-    if (hero->x > HERO_MAX_X)
-        hero->x = HERO_MAX_X;
-    if (hero->y > HERO_MAX_Y)
-        hero->y = HERO_MAX_Y;
+    /* check if the hero is inside the map */
+    if (hero->mapX < 0)
+        hero->mapX = 0;
+    if (hero->mapX > 39)
+        hero->mapX = 39;
+    if (hero->mapY < 0)
+        hero->mapY = 0;
+    if (hero->mapY > 22)
+        hero->mapY = 22;
+    
 
     hero->active = false;
 }
@@ -105,7 +150,7 @@ void hero_draw(HERO *hero, SPRITES *sprites)
     /* it gets the a specific region of the spritesheet by using sourceX and sourceY */
 
     if (hero->easteregg == 4)
-        al_draw_tinted_bitmap_region(sprites->hero, al_map_rgb(255,0,255),hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
+        al_draw_tinted_bitmap_region(sprites->hero, al_map_rgb(255, 0, 255), hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H,  hero->mapX * HERO_W, hero->mapY * HERO_H, 0);
     else
-        al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->x, hero->y, 0);
+        al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->mapX * HERO_W, hero->mapY * HERO_H, 0);
 }

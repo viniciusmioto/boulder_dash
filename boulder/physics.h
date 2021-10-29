@@ -21,7 +21,7 @@ typedef enum Direction
 
 typedef struct HERO
 {
-    int x, y, lives, sourceX, sourceY, easteregg;
+    int lives, sourceX, sourceY, easteregg, mapX, mapY;
     bool active;
     ALLEGRO_BITMAP *sprites;
     Direction direction;
@@ -33,7 +33,7 @@ void hero_init(HERO *hero);
 
 void hero_draw(HERO *hero, SPRITES *sprites);
 
-void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter);
+void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter, int map[23][40]);
 
 int verify_easter_egg(HERO *hero, unsigned char key[ALLEGRO_KEY_MAX]);
 
