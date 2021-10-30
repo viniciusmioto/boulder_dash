@@ -1,20 +1,5 @@
 #include "physics.h"
 
-/* It returns whether two squares will colide */
-bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2)
-{
-    if (ax1 > bx2)
-        return false;
-    if (ax2 < bx1)
-        return false;
-    if (ay1 > by2)
-        return false;
-    if (ay2 < by1)
-        return false;
-
-    return true;
-}
-
 /* Initialize hero (Rockford) attributes */
 void hero_init(HERO *hero)
 {
@@ -31,50 +16,52 @@ void hero_init(HERO *hero)
 }
 
 /* gravity of boulder */
-void update_map(HERO *hero, int map[MAP_H][MAP_W])
+void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
 {
-    int i, j;
-    for (i = 0; i < MAP_H; i++)
+    int y, x;
+
+    if (counter % 5 == 1)
     {
-        for (j = 0; j < MAP_W; j++)
+        for (y = 0; y < MAP_H; y++)
         {
-            if (map[i][j] == BOULDER && !(i + 1 == hero->mapY && j == hero->mapX))
+            for (x = 0; x < MAP_W; x++)
             {
-                if (map[i + 1][j] == EMPTY)
+                if (map[y][x] == element)
                 {
-                    map[i + 1][j] = BOULDER;
-                    map[i][j] = EMPTY;
-                }
-                else if (map[i + 1][j] == BOULDER && map[i + 1][j - 1] == EMPTY)
-                {
-                    map[i + 1][j - 1] = BOULDER;
-                    map[i][j] = EMPTY;
-                }
-                else if (map[i + 1][j] == BOULDER && map[i + 1][j + 1] == EMPTY)
-                {
-                    map[i + 1][j + 1] = BOULDER;
-                    map[i][j] = EMPTY;
-                }
-            }
-            else if (map[i][j] == DIAMOND && !(i + 1 == hero->mapY && j == hero->mapX))
-            {
-                if (map[i + 1][j] == EMPTY)
-                {
-                    map[i + 1][j] = DIAMOND;
-                    map[i][j] = EMPTY;
-                }
-                else if (map[i + 1][j] == DIAMOND && map[i + 1][j - 1] == EMPTY)
-                {
-                    map[i + 1][j - 1] = DIAMOND;
-                    map[i][j] = EMPTY;
-                }
-                else if (map[i + 1][j] == DIAMOND && map[i + 1][j + 1] == EMPTY)
-                {
-                    map[i + 1][j + 1] = DIAMOND;
-                    map[i][j] = EMPTY;
+                    if (map[y + 1][x] == EMPTY && !(y + 1 == hero->mapY && x == hero->mapX))
+                    {
+                        map[y + 1][x] = element;
+                        map[y][x] = EMPTY;
+                    }
+                    else if (map[y + 1][x] == element && map[y + 1][x - 1] == EMPTY && !(y + 1 == hero->mapY && x - 1 == hero->mapX))
+                    {
+                        map[y + 1][x - 1] = element;
+                        map[y][x] = EMPTY;
+                    }
+                    else if (map[y + 1][x] == element && map[y + 1][x + 1] == EMPTY && !(y + 1 == hero->mapY && x + 1 == hero->mapX))
+                    {
+                        map[y + 1][x + 1] = element;
+                        map[y][x] = EMPTY;
+                    }
                 }
             }
         }
+    } 
+    else
+        return;
+}
+
+void push_boulder(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
+{
+    if (hero->direction == LEFT && map[y][x - 1] == EMPTY)
+    {
+        map[y][x - 1] = BOULDER;
+        map[y][x] = EMPTY;
+    }
+    else if (hero->direction == RIGHT && map[y][x + 1] == EMPTY)
+    {
+        map[y][x + 1] = BOULDER;
+        map[y][x] = EMPTY;
     }
 }
 
@@ -119,12 +106,16 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             hero->direction = LEFT;
             if (!object_collision(hero, map, hero->mapX - 1, hero->mapY))
                 hero->mapX--;
+            else
+                push_boulder(hero, map, hero->mapX - 1, hero->mapY);
         }
         else if (key[ALLEGRO_KEY_RIGHT])
         {
             hero->direction = RIGHT;
             if (!object_collision(hero, map, hero->mapX + 1, hero->mapY))
                 hero->mapX++;
+            else
+                push_boulder(hero, map, hero->mapX + 1, hero->mapY);
         }
         else if (key[ALLEGRO_KEY_UP])
         {
@@ -152,6 +143,8 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             hero->sourceX = 0;
 
         hero->sourceY = hero->direction;
+        update_map(hero, map, BOULDER, counter);
+        update_map(hero, map, DIAMOND, counter);
     }
 
     /* check if the hero is inside the map */
@@ -167,7 +160,6 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
     if (hero->diamonds >= 12)
         map[MAP_H - 6][MAP_W - 2] = 6;
 
-    update_map(hero, map);
     hero->active = false;
 }
 

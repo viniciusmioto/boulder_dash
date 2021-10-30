@@ -13,7 +13,7 @@ int main()
     bool done = false, redraw = true;
     unsigned char key[ALLEGRO_KEY_MAX];
     int activate_easter_egg = 0, loadCounterX = 0, loadCounterY = 0, mapSizeX = 0, mapSizeY = 0;
-    int map[23][40];
+    int map[MAP_H][MAP_W];
 
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
