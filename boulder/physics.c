@@ -38,12 +38,40 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W])
     {
         for (j = 0; j < MAP_W; j++)
         {
-            if (map[i][j] == 2 && !(i + 1 == hero->mapY && j == hero->mapX))
+            if (map[i][j] == BOULDER && !(i + 1 == hero->mapY && j == hero->mapX))
             {
-                if (map[i + 1][j] == 0)
+                if (map[i + 1][j] == EMPTY)
                 {
-                    map[i + 1][j] = 2;
-                    map[i][j] = 0;
+                    map[i + 1][j] = BOULDER;
+                    map[i][j] = EMPTY;
+                }
+                else if (map[i + 1][j] == BOULDER && map[i + 1][j - 1] == EMPTY)
+                {
+                    map[i + 1][j - 1] = BOULDER;
+                    map[i][j] = EMPTY;
+                }
+                else if (map[i + 1][j] == BOULDER && map[i + 1][j + 1] == EMPTY)
+                {
+                    map[i + 1][j + 1] = BOULDER;
+                    map[i][j] = EMPTY;
+                }
+            }
+            else if (map[i][j] == DIAMOND && !(i + 1 == hero->mapY && j == hero->mapX))
+            {
+                if (map[i + 1][j] == EMPTY)
+                {
+                    map[i + 1][j] = DIAMOND;
+                    map[i][j] = EMPTY;
+                }
+                else if (map[i + 1][j] == DIAMOND && map[i + 1][j - 1] == EMPTY)
+                {
+                    map[i + 1][j - 1] = DIAMOND;
+                    map[i][j] = EMPTY;
+                }
+                else if (map[i + 1][j] == DIAMOND && map[i + 1][j + 1] == EMPTY)
+                {
+                    map[i + 1][j + 1] = DIAMOND;
+                    map[i][j] = EMPTY;
                 }
             }
         }
