@@ -26,17 +26,29 @@ void hero_init(HERO *hero)
     hero->easteregg = 0;
     hero->active = false;
     hero->direction = STOPPED;
+    hero->diamonds = 0;
 }
 
 bool object_collision(HERO *hero, int map[23][40], int x, int y)
 {
-    if (map[y][x] == 0 || map[y][x] == 1)
+    switch (map[y][x])
     {
+    case EMPTY:
+        return false;
+    case DIRT:
         map[y][x] = 0;
         return false;
-    }
-    else
+    case WALL:
         return true;
+    case BRICK:
+        return true;
+    case DIAMOND:
+        hero->diamonds++;
+        map[y][x] = 0;
+        return false;
+    default:
+        return true;
+    }
 }
 
 /* Movements with arrow keys and animations with sprites */
@@ -115,6 +127,9 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             hero->sourceX = 0;
 
         hero->sourceY = hero->direction;
+        
+        /* print hero diamond count */
+        printf("Diamonds: %d\n", hero->diamonds);
     }
 
     /* check if the hero is inside the map */
@@ -126,7 +141,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         hero->mapY = 0;
     if (hero->mapY > 22)
         hero->mapY = 22;
-    
+
     object_collision(hero, map, hero->mapX, hero->mapY);
 
     hero->active = false;
@@ -150,7 +165,7 @@ void hero_draw(HERO *hero, SPRITES *sprites)
     /* it gets the a specific region of the spritesheet by using sourceX and sourceY */
 
     if (hero->easteregg == 4)
-        al_draw_tinted_bitmap_region(sprites->hero, al_map_rgb(255, 0, 255), hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H,  hero->mapX * HERO_W, hero->mapY * HERO_H, 0);
+        al_draw_tinted_bitmap_region(sprites->hero, al_map_rgb(255, 0, 255), hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->mapX * HERO_W, hero->mapY * HERO_H, 0);
     else
         al_draw_bitmap_region(sprites->hero, hero->sourceX, hero->sourceY * al_get_bitmap_height(sprites->hero) / 5, HERO_W, HERO_H, hero->mapX * HERO_W, hero->mapY * HERO_H, 0);
 }

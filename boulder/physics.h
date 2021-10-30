@@ -10,6 +10,13 @@
 #define HERO_MAX_X (BUFFER_W - HERO_W)
 #define HERO_MAX_Y (BUFFER_H - HERO_H)
 
+#define EMPTY 0
+#define DIRT 1
+#define BOULDER 2
+#define WALL 3
+#define BRICK 4
+#define DIAMOND 5
+
 typedef enum Direction
 {
     DOWN,
@@ -21,7 +28,7 @@ typedef enum Direction
 
 typedef struct HERO
 {
-    int lives, sourceX, sourceY, easteregg, mapX, mapY;
+    int lives, sourceX, sourceY, easteregg, mapX, mapY, diamonds;
     bool active;
     ALLEGRO_BITMAP *sprites;
     Direction direction;
