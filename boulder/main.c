@@ -48,7 +48,7 @@ int main()
     load_map("map.txt", map);
 
     /* MAIN LOOP */
-    while (!done)
+    while (!done && !hero.won)
     {
         al_wait_for_event(queue, &event);
 

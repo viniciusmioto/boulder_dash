@@ -47,6 +47,10 @@ void sprites_init(SPRITES *sprites)
     /* wall tile */
     sprites->wall = sprite_grab(sprites, TILE_SIZE * 3, TILE_SIZE * 6, TILE_SIZE, TILE_SIZE);
     must_init(sprites->wall, "sprites - wall");
+
+    /* exit tile */
+    sprites->exit = sprite_grab(sprites, 0, TILE_SIZE * 6, TILE_SIZE * 2, TILE_SIZE);
+    must_init(sprites->exit, "sprites - exit");
 }
 
 /* Free memory of sprites */
@@ -197,7 +201,12 @@ void draw_map(int map[23][40], SPRITES *sprites, int counter)
                 else
                     al_draw_bitmap_region(sprites->diamond, TILE_SIZE * 6, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
                 break;
-
+            case EXIT:
+                if (counter % 50 <= 25)
+                    al_draw_bitmap_region(sprites->exit, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                else
+                    al_draw_bitmap_region(sprites->exit, TILE_SIZE * 2, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                break;
             default:
                 break;
             }
