@@ -9,6 +9,14 @@
 #include <allegro5/allegro_acodec.h>
 #include <allegro5/allegro_image.h>
 
+/* map elements */
+#define EMPTY 0
+#define DIRT 1
+#define BOULDER 2
+#define WALL 3
+#define BRICK 4
+#define DIAMOND 5
+
 /* width and heigh dimensions */
 #define BUFFER_W 1280
 #define BUFFER_H 736
@@ -23,6 +31,9 @@
 /* tile objects */
 #define TILE_SIZE 32
 
+/* map dimensions */
+#define MAP_W 40
+#define MAP_H 23
 
 /* KEYBOARD STUFF */
 #define KEY_SEEN 1
@@ -59,6 +70,6 @@ void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key);
 
 void loadMap(const char *fileName, int map[23][40]);
 
-void draw_map(int map[23][40], SPRITES *sprites);
+void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites);
 
 #endif

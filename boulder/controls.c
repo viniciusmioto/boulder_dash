@@ -20,24 +20,31 @@ ALLEGRO_BITMAP *sprite_grab(SPRITES *sprites, int x, int y, int w, int h)
 /* Initialize our sprites */
 void sprites_init(SPRITES *sprites)
 {
+    /* Load the spritesheet with all the elements */
     sprites->_spritesheet = al_load_bitmap("spritesheet.png");
     must_init(sprites->_spritesheet, "map sprites");
 
+    /* Rockford's movements and animations */
     sprites->hero = sprite_grab(sprites, 0, TILE_SIZE, TILE_SIZE * 8, TILE_SIZE * 5);
     must_init(sprites->hero, "map sprites - Rockford");
 
+    /* diamonds' animations */
     sprites->diamond = sprite_grab(sprites, 0, TILE_SIZE * 10, TILE_SIZE * 8, TILE_SIZE);
     must_init(sprites->diamond, "map sprites - diamonds");
 
+    /* boulder tile */
     sprites->boulder = sprite_grab(sprites, 0, TILE_SIZE * 7, TILE_SIZE, TILE_SIZE);
     must_init(sprites->boulder, "map sprites - boulder");
 
+    /* dirt tile */
     sprites->dirt = sprite_grab(sprites, TILE_SIZE, TILE_SIZE * 7, TILE_SIZE, TILE_SIZE);
     must_init(sprites->dirt, "sprites - dirt");
 
+    /* brick tile */
     sprites->brick = sprite_grab(sprites, TILE_SIZE, TILE_SIZE * 6, TILE_SIZE, TILE_SIZE);
     must_init(sprites->brick, "sprites - brick");
 
+    /* wall tile */
     sprites->wall = sprite_grab(sprites, TILE_SIZE * 3, TILE_SIZE * 6, TILE_SIZE, TILE_SIZE);
     must_init(sprites->wall, "sprites - wall");
 
@@ -46,8 +53,13 @@ void sprites_init(SPRITES *sprites)
 /* Free memory of sprites */
 void sprites_deinit(SPRITES *sprites)
 {
+    al_destroy_bitmap(sprites->_spritesheet);
     al_destroy_bitmap(sprites->hero);
-    // al_destroy_bitmap(sprites->map);
+    al_destroy_bitmap(sprites->dirt);
+    al_destroy_bitmap(sprites->boulder);
+    al_destroy_bitmap(sprites->wall);
+    al_destroy_bitmap(sprites->brick);
+    al_destroy_bitmap(sprites->diamond);
 }
 
 /* Initialize our display */
@@ -158,19 +170,19 @@ void draw_map(int map[23][40], SPRITES *sprites)
         {
             switch (map[i][j])
             {
-            case 1:
+            case DIRT:
                 al_draw_bitmap(sprites->dirt, TILE_SIZE * j, TILE_SIZE * i, 0);
                 break;
-            case 2:
+            case BOULDER:
                 al_draw_bitmap(sprites->boulder, TILE_SIZE * j, TILE_SIZE * i, 0);
                 break;
-            case 3:
+            case WALL:
                 al_draw_bitmap(sprites->brick, TILE_SIZE * j, TILE_SIZE * i, 0);
                 break;
-            case 4:
+            case BRICK:
                 al_draw_bitmap(sprites->wall, TILE_SIZE * j, TILE_SIZE * i, 0);
                 break;
-            case 5:
+            case DIAMOND:
                 al_draw_bitmap_region(sprites->diamond, 0, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
                 break;
             default:
