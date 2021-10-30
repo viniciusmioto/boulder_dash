@@ -145,7 +145,6 @@ void load_map(const char *fileName, int map[23][40])
         exit(1);
     }
 
-    i = 0, j = 0;
     while ((c = fgetc(file)) != EOF)
     {
         if (c == '\n')

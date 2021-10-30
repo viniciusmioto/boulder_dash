@@ -13,13 +13,15 @@ void hero_init(HERO *hero)
     hero->direction = STOPPED;
     hero->diamonds = 0;
     hero->won = false;
+    hero->lose = false;
 }
 
 /* gravity of boulder */
 void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
 {
-    int y, x;
+    int y, x, falling_distance;
 
+    falling_distance = 0;
     if (counter % 5 == 1)
     {
         for (y = 0; y < MAP_H; y++)
@@ -28,25 +30,45 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
             {
                 if (map[y][x] == element)
                 {
+                    /* fall */
                     if (map[y + 1][x] == EMPTY && !(y + 1 == hero->mapY && x == hero->mapX))
                     {
+                        falling_distance++;
+                        if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x) && falling_distance >= 1)
+                        {
+                            hero->lose = true;
+                        }
                         map[y + 1][x] = element;
                         map[y][x] = EMPTY;
                     }
+                    /* roll left */
                     else if (map[y + 1][x] == element && map[y + 1][x - 1] == EMPTY && !(y + 1 == hero->mapY && x - 1 == hero->mapX))
                     {
+                        falling_distance++;
+                        if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x - 1) && falling_distance >= 1)
+                        {
+                            hero->lose = true;
+                        }
                         map[y + 1][x - 1] = element;
                         map[y][x] = EMPTY;
                     }
+                    /* roll right */
                     else if (map[y + 1][x] == element && map[y + 1][x + 1] == EMPTY && !(y + 1 == hero->mapY && x + 1 == hero->mapX))
                     {
+                        falling_distance++;
+                        if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x + 1) && falling_distance >= 1)
+                        {
+                            hero->lose = true;
+                        }
                         map[y + 1][x + 1] = element;
                         map[y][x] = EMPTY;
                     }
                 }
             }
         }
-    } 
+        printf("Falling distance: %d\n", falling_distance);
+        printf("Hero Lose: %d\n", hero->lose);
+    }
     else
         return;
 }
