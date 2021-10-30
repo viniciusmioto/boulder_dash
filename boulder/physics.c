@@ -27,6 +27,7 @@ void hero_init(HERO *hero)
     hero->active = false;
     hero->direction = STOPPED;
     hero->diamonds = 0;
+    hero->won = false;
 }
 
 bool object_collision(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
@@ -44,6 +45,10 @@ bool object_collision(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
         return true;
     case DIAMOND:
         hero->diamonds++;
+        map[y][x] = 0;
+        return false;
+    case EXIT:
+        hero->won = true;
         map[y][x] = 0;
         return false;
     default:
@@ -66,7 +71,6 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             hero->direction = LEFT;
             if (!object_collision(hero, map, hero->mapX - 1, hero->mapY))
                 hero->mapX--;
-            
         }
         else if (key[ALLEGRO_KEY_RIGHT])
         {
@@ -80,7 +84,6 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             hero->direction = UP;
             if (!object_collision(hero, map, hero->mapX, hero->mapY - 1))
                 hero->mapY--;
-            
         }
         else if (key[ALLEGRO_KEY_DOWN])
         {
@@ -114,7 +117,8 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
     if (hero->mapY > MAP_H - 1)
         hero->mapY = MAP_H - 1;
 
-    object_collision(hero, map, hero->mapX, hero->mapY);
+    if (hero->diamonds >= 12)
+        map[MAP_H - 6][MAP_W - 2] = 6;
 
     hero->active = false;
 }

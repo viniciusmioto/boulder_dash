@@ -16,6 +16,7 @@
 #define WALL 3
 #define BRICK 4
 #define DIAMOND 5
+#define EXIT 6
 
 /* width and heigh dimensions */
 #define BUFFER_W 1280
@@ -48,6 +49,7 @@ typedef struct SPRITES
     ALLEGRO_BITMAP *dirt;
     ALLEGRO_BITMAP *wall;
     ALLEGRO_BITMAP *brick;
+    ALLEGRO_BITMAP *exit;
 } SPRITES;
 
 void must_init(bool test, const char *description);
@@ -68,8 +70,8 @@ void keyboard_init(unsigned char *key);
 
 void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key);
 
-void loadMap(const char *fileName, int map[23][40]);
+void load_map(const char *fileName, int map[23][40]);
 
-void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites);
+void draw_map(int map[23][40], SPRITES *sprites, int counter);
 
 #endif

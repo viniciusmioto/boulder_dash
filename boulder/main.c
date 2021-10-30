@@ -45,10 +45,10 @@ int main()
     keyboard_init(key);
     sprites_init(&sprites);
 
-    loadMap("map.txt", map);
+    load_map("map.txt", map);
 
     /* MAIN LOOP */
-    while (!done)
+    while (!done && !hero.won)
     {
         al_wait_for_event(queue, &event);
 
@@ -78,7 +78,7 @@ int main()
         {
             disp_pre_draw(&display, &buffer);
             al_clear_to_color(al_map_rgb(0, 0, 0));
-            draw_map(map, &sprites);
+            draw_map(map, &sprites, event.timer.count);
             hero_draw(&hero, &sprites);
             disp_post_draw(&display, &buffer);
             redraw = false;

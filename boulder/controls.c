@@ -48,6 +48,9 @@ void sprites_init(SPRITES *sprites)
     sprites->wall = sprite_grab(sprites, TILE_SIZE * 3, TILE_SIZE * 6, TILE_SIZE, TILE_SIZE);
     must_init(sprites->wall, "sprites - wall");
 
+    /* exit tile */
+    sprites->exit = sprite_grab(sprites, 0, TILE_SIZE * 6, TILE_SIZE * 2, TILE_SIZE);
+    must_init(sprites->exit, "sprites - exit");
 }
 
 /* Free memory of sprites */
@@ -130,7 +133,7 @@ void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key)
     }
 }
 
-void loadMap(const char *fileName, int map[23][40])
+void load_map(const char *fileName, int map[23][40])
 {
     int i = 0, j = 0;
     char c;
@@ -160,11 +163,11 @@ void loadMap(const char *fileName, int map[23][40])
     fclose(file);
 }
 
-void draw_map(int map[23][40], SPRITES *sprites)
+void draw_map(int map[23][40], SPRITES *sprites, int counter)
 {
     int i, j;
-    
-    for (i = 0; i < 23; i++)
+
+    for (i = i; i < 23; i++)
     {
         for (j = 0; j < 40; j++)
         {
@@ -183,7 +186,26 @@ void draw_map(int map[23][40], SPRITES *sprites)
                 al_draw_bitmap(sprites->wall, TILE_SIZE * j, TILE_SIZE * i, 0);
                 break;
             case DIAMOND:
-                al_draw_bitmap_region(sprites->diamond, 0, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                if (counter % 100 <= 15)
+                    al_draw_bitmap_region(sprites->diamond, TILE_SIZE * 0, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                else if (counter % 100 <= 30)
+                    al_draw_bitmap_region(sprites->diamond, TILE_SIZE * 1, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                else if (counter % 100 <= 45)
+                    al_draw_bitmap_region(sprites->diamond, TILE_SIZE * 2, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                else if (counter % 100 <= 60)
+                    al_draw_bitmap_region(sprites->diamond, TILE_SIZE * 3, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                else if (counter % 100 <= 75)
+                    al_draw_bitmap_region(sprites->diamond, TILE_SIZE * 4, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                else if (counter % 100 <= 90)
+                    al_draw_bitmap_region(sprites->diamond, TILE_SIZE * 5, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                else
+                    al_draw_bitmap_region(sprites->diamond, TILE_SIZE * 6, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                break;
+            case EXIT:
+                if (counter % 50 <= 25)
+                    al_draw_bitmap_region(sprites->exit, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                else
+                    al_draw_bitmap_region(sprites->exit, TILE_SIZE * 2, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
                 break;
             default:
                 break;
