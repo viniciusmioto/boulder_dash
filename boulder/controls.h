@@ -68,8 +68,8 @@ void keyboard_init(unsigned char *key);
 
 void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key);
 
-void loadMap(const char *fileName, int map[23][40]);
+void load_map(const char *fileName, int map[23][40]);
 
-void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites);
+void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites, int counter);
 
 #endif
