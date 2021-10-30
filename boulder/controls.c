@@ -163,7 +163,7 @@ void load_map(const char *fileName, int map[23][40])
     fclose(file);
 }
 
-void draw_map(int map[23][40], SPRITES *sprites, int counter)
+void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites, int counter)
 {
     int i, j;
 

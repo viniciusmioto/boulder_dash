@@ -30,6 +30,26 @@ void hero_init(HERO *hero)
     hero->won = false;
 }
 
+/* gravity of boulder */
+void update_map(HERO *hero, int map[MAP_H][MAP_W])
+{
+    int i, j;
+    for (i = 0; i < MAP_H; i++)
+    {
+        for (j = 0; j < MAP_W; j++)
+        {
+            if (map[i][j] == 2 && !(i + 1 == hero->mapY && j == hero->mapX))
+            {
+                if (map[i + 1][j] == 0)
+                {
+                    map[i + 1][j] = 2;
+                    map[i][j] = 0;
+                }
+            }
+        }
+    }
+}
+
 bool object_collision(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
 {
     switch (map[y][x])
@@ -74,7 +94,6 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         }
         else if (key[ALLEGRO_KEY_RIGHT])
         {
-
             hero->direction = RIGHT;
             if (!object_collision(hero, map, hero->mapX + 1, hero->mapY))
                 hero->mapX++;
@@ -120,6 +139,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
     if (hero->diamonds >= 12)
         map[MAP_H - 6][MAP_W - 2] = 6;
 
+    update_map(hero, map);
     hero->active = false;
 }
 
