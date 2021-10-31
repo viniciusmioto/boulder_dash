@@ -1,7 +1,7 @@
 #include "controls.h"
-/* ** All the following functions are designed and recommended by the Allegro tutorial ** */
+/* ** All the following functions with the (AL) label are designed and recommended by the Allegro tutorial ** */
 
-/* Verify if an specific initialization went right */
+/* (AL) Verify if an specific initialization went right */
 void must_init(bool test, const char *description)
 {
     if (test)
@@ -11,13 +11,14 @@ void must_init(bool test, const char *description)
     exit(1);
 }
 
+/* (AL) Select a specific region of the spritesheet */
 ALLEGRO_BITMAP *sprite_grab(SPRITES *sprites, int x, int y, int w, int h)
 {
     ALLEGRO_BITMAP *sprite = al_create_sub_bitmap(sprites->_spritesheet, x, y, w, h);
     return sprite;
 }
 
-/* Initialize our sprites */
+/* (AL) Initialize our sprites */
 void sprites_init(SPRITES *sprites)
 {
     /* Load the spritesheet with all the elements */
@@ -57,7 +58,7 @@ void sprites_init(SPRITES *sprites)
     must_init(sprites->explosion, "sprites - explosion");
 }
 
-/* Free memory of sprites */
+/* (AL) Free memory of sprites */
 void sprites_deinit(SPRITES *sprites)
 {
     al_destroy_bitmap(sprites->_spritesheet);
@@ -71,7 +72,7 @@ void sprites_deinit(SPRITES *sprites)
     al_destroy_bitmap(sprites->explosion);
 }
 
-/* Initialize our display */
+/* (AL) Initialize our display */
 void disp_init(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
 {
     /* set our display */
@@ -86,20 +87,20 @@ void disp_init(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
     must_init(*buffer, "bitmap buffer");
 }
 
-/* Free memory of display */
+/* (AL) Free memory of display */
 void disp_deinit(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
 {
     al_destroy_bitmap(*buffer);
     al_destroy_display(*display);
 }
 
-/* Pre-draw the display (buffer) */
+/* (AL) Pre-draw the display (buffer) */
 void disp_pre_draw(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
 {
     al_set_target_bitmap(*buffer);
 }
 
-/* Update the display (buffer) */
+/* (AL) Update the display (buffer) */
 void disp_post_draw(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
 {
     al_set_target_backbuffer(*display);
@@ -107,13 +108,13 @@ void disp_post_draw(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
     al_flip_display();
 }
 
-/* Initialize the keyboard */
+/* (AL) Initialize the keyboard */
 void keyboard_init(unsigned char *key)
 {
     memset(key, 0, sizeof(key));
 }
 
-/* Check for events updates with the keyboard (Allegro Template Function) */
+/* (AL) Check for events updates with the keyboard (Allegro Template Function) */
 void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key)
 {
     /* check if the key is pressed */
@@ -139,6 +140,7 @@ void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key)
     }
 }
 
+/* Load the map by using a matrix in text file */
 void load_map(const char *fileName, int map[23][40])
 {
     int i = 0, j = 0;
@@ -168,6 +170,7 @@ void load_map(const char *fileName, int map[23][40])
     fclose(file);
 }
 
+/* Show the map on the screen with some animations */
 void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites, int counter)
 {
     int i, j;
