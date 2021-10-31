@@ -1,5 +1,5 @@
-#include "physics.h"
-#include "scores.h"
+#include "./libs/physics.h"
+#include "./libs/scores.h"
 
 int main()
 {

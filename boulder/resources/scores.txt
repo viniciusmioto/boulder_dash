@@ -2,4 +2,9 @@ nice 180
 nice 180
 nice 150
 nice 110
+nice 60
+nice 50
 nice 30
+nice 10
+nice 10
+nice 10
