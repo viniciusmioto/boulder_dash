@@ -1,14 +1,20 @@
 #include "physics.h"
+#include "scores.h"
 
 int main()
 {
     /* INIT */
     HERO hero;
     SPRITES sprites;
+    ALLEGRO_FONT *font;
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_BITMAP *buffer = NULL;
     ALLEGRO_TIMER *timer = NULL;
     ALLEGRO_EVENT_QUEUE *queue = NULL;
+    LinkedList scores_list;
+    init_list(&scores_list);
+    read_scores(&scores_list);
+
     long frames = 0;
     bool done = false, redraw = true;
     unsigned char key[ALLEGRO_KEY_MAX];
@@ -48,7 +54,7 @@ int main()
     load_map("./resources/map.txt", map);
 
     /* MAIN LOOP */
-    while (!done && !hero.won)
+    while (!done)
     {
         al_wait_for_event(queue, &event);
 
@@ -57,8 +63,22 @@ int main()
         case ALLEGRO_EVENT_TIMER:
             move_hero(&hero, &sprites, key, event.timer.count, map);
             verify_easter_egg(&hero, key);
+            
             if (key[ALLEGRO_KEY_ESCAPE])
+            /* restart game */
+            {
+                hero_init(&hero);
+                load_map("./resources/map.txt", map);
+            }
+            if (key[ALLEGRO_KEY_F1])
+            /* settings */
+            {
+                /* nothing to do */
+            }
+            if (key[ALLEGRO_KEY_Q])
+            {
                 done = true;
+            }
 
             redraw = true;
             frames++;
@@ -80,8 +100,24 @@ int main()
             al_clear_to_color(al_map_rgb(0, 0, 0));
 
             draw_map(map, &sprites, event.timer.count);
-            if (!hero.lose)
+
+            if (!hero.lose && !hero.win)
                 hero_draw(&hero, &sprites);
+            else
+            {
+                if (hero.lose)
+                {
+                    printf("You Lose!\n");
+                }
+                else if (hero.win)
+                {
+                    printf("You Win!\n");
+                }
+                save_score(&scores_list, hero.score, hero.name);
+                write_scores(scores_list);
+                hero.score = 0;
+                done = true;
+            }
 
             disp_post_draw(&display, &buffer);
             redraw = false;
