@@ -20,6 +20,7 @@ void hero_init(HERO *hero)
 void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
 {
     int y, x, falling_distance;
+    bool game_over = false;
 
     falling_distance = 0;
     if (counter % 5 == 1)
@@ -36,7 +37,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
                         falling_distance++;
                         if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x) && falling_distance >= 1)
                         {
-                            hero->lose = true;
+                            game_over = true;
                         }
                         map[y + 1][x] = element;
                         map[y][x] = EMPTY;
@@ -47,7 +48,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
                         falling_distance++;
                         if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x - 1) && falling_distance >= 1)
                         {
-                            hero->lose = true;
+                            game_over = true;
                         }
                         map[y + 1][x - 1] = element;
                         map[y][x] = EMPTY;
@@ -58,7 +59,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
                         falling_distance++;
                         if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x + 1) && falling_distance >= 1)
                         {
-                            hero->lose = true;
+                            game_over = true;
                         }
                         map[y + 1][x + 1] = element;
                         map[y][x] = EMPTY;
@@ -66,11 +67,24 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
                 }
             }
         }
-        printf("Falling distance: %d\n", falling_distance);
-        printf("Hero Lose: %d\n", hero->lose);
     }
-    else
+
+    if (game_over)
+    {
+        /* draw square of explosions */
+
+        map[hero->mapY][hero->mapX] = EXPLOSION;
+        map[hero->mapY + 1][hero->mapX] = EXPLOSION;
+        map[hero->mapY - 1][hero->mapX] = EXPLOSION;
+        map[hero->mapY][hero->mapX + 1] = EXPLOSION;
+        map[hero->mapY][hero->mapX - 1] = EXPLOSION;
+        map[hero->mapY + 1][hero->mapX + 1] = EXPLOSION;
+        map[hero->mapY - 1][hero->mapX - 1] = EXPLOSION;
+        map[hero->mapY + 1][hero->mapX - 1] = EXPLOSION;
+        map[hero->mapY - 1][hero->mapX + 1] = EXPLOSION;
+        hero->lose = true;
         return;
+    }
 }
 
 void push_boulder(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
