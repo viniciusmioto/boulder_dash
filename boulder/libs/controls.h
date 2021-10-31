@@ -2,6 +2,7 @@
 #define __DISPLAY__
 
 #include <stdio.h>
+#include <math.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
@@ -75,5 +76,9 @@ void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key);
 void load_map(const char *fileName, int map[23][40]);
 
 void draw_map(int map[23][40], SPRITES *sprites, int counter);
+
+void hud_draw(ALLEGRO_FONT *font, long count_down, long score);
+
+int count_down(int counter);
 
 #endif

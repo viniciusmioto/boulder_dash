@@ -45,6 +45,9 @@ int main(int argc, char **argv)
 
     disp_init(&display, &buffer);
 
+    font = al_create_builtin_font();
+    must_init(font, "font");
+
     must_init(al_init_image_addon(), "image");
     must_init(al_init_primitives_addon(), "primitives");
 
@@ -84,11 +87,18 @@ int main(int argc, char **argv)
             if (key[ALLEGRO_KEY_ESCAPE])
             /* restart game */
             {
-                hero_init(&hero);
-                load_map("./resources/map.txt", map);
+                if (event.timer.count % 5 == 0)
+                {
+                    save_score(&scores_list, hero.score, hero.name);
+                    write_scores(scores_list);
+                    hero_init(&hero);
+                    load_map("./resources/map.txt", map);
+                    al_set_timer_count(timer, 0);
+                    al_resume_timer(timer);
+                }
             }
             if (key[ALLEGRO_KEY_F1])
-            /* settings */
+            /* info */
             {
                 /* nothing to do */
             }
@@ -117,32 +127,53 @@ int main(int argc, char **argv)
             al_clear_to_color(al_map_rgb(0, 0, 0));
 
             draw_map(map, &sprites, event.timer.count);
+            hud_draw(font, 150 - event.timer.count / 60, hero.score);
 
-            if (!hero.lose && !hero.win)
-                hero_draw(&hero, &sprites);
-            else
+            if (hero.lose)
             {
-                if (hero.lose)
+                al_draw_text(
+                    font,
+                    al_map_rgb_f(1, 1, 1),
+                    (DISP_W / 2), TILE_SIZE / 2,
+                    ALLEGRO_ALIGN_CENTER,
+                    "G A M E  O V E R !");
+
+                if (event.timer.count % 71 == 0)
                 {
-                    printf("You Lose!\n");
+                    save_score(&scores_list, hero.score, hero.name);
+                    write_scores(scores_list);
+                    hero_init(&hero);
+                    load_map("./resources/map.txt", map);
+                    al_set_timer_count(timer, 0);
+                    al_resume_timer(timer);
                 }
-                else if (hero.win)
-                {
-                    printf("You Win!\n");
-                }
-                save_score(&scores_list, hero.score, hero.name);
-                write_scores(scores_list);
-                hero.score = 0;
-                done = true;
             }
+            else if (hero.win)
+            {
+                al_draw_text(
+                    font,
+                    al_map_rgb_f(1, 1, 1),
+                    (DISP_W / 2), TILE_SIZE / 2,
+                    ALLEGRO_ALIGN_CENTER,
+                    "Y O U  W I N !");
+
+                al_stop_timer(timer);
+                hero.score += (150 - event.timer.count / 60);
+            }
+            else
+                hero_draw(&hero, &sprites);
 
             disp_post_draw(&display, &buffer);
             redraw = false;
         }
     }
 
+    save_score(&scores_list, hero.score, hero.name);
+    write_scores(scores_list);
+
     sprites_deinit(&sprites);
     disp_deinit(&display, &buffer);
+    al_destroy_font(font);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
     deallocate_list(&scores_list);

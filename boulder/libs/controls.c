@@ -226,3 +226,25 @@ void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites, int counter)
         }
     }
 }
+
+int count_down(int counter)
+{
+    return floor(150 - counter);
+}
+
+void hud_draw(ALLEGRO_FONT *font, long count_down, long score)
+{
+    al_draw_textf(
+        font,
+        al_map_rgb_f(1, 1, 1),
+        (TILE_SIZE * 4), TILE_SIZE / 2,
+        ALLEGRO_ALIGN_CENTER,
+        "TIME: %ld", count_down);
+
+    al_draw_textf(
+        font,
+        al_map_rgb_f(1, 1, 1),
+        (DISP_W - TILE_SIZE * 6), TILE_SIZE / 2,
+        ALLEGRO_ALIGN_CENTER,
+        "SCORE: %06ld", score);
+}

@@ -57,7 +57,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
                             map[y + 1][x - 1] = object;
                             map[y][x] = EMPTY;
                         }
-                        /* object rolling right */ 
+                        /* object rolling right */
                         else if (map[y + 1][x + 1] == EMPTY && map[y][x + 1] == EMPTY && !(y + 1 == hero->mapY && x + 1 == hero->mapX))
                         {
                             falling_distance++;
@@ -86,6 +86,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
                 map[y][x] = EXPLOSION;
             }
         }
+
         hero->lose = true;
     }
 }
