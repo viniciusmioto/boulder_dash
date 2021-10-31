@@ -1,7 +1,7 @@
 #include "./libs/physics.h"
 #include "./libs/scores.h"
 
-int main()
+int main(int argc, char **argv)
 {
     /* -- INIT -- */
 
@@ -18,6 +18,8 @@ int main()
     ALLEGRO_EVENT_QUEUE *queue = NULL;
     ALLEGRO_EVENT event;
 
+    char name[25];
+
     /* Read txt with Scores List */
     init_list(&scores_list);
     read_scores(&scores_list);
@@ -26,8 +28,8 @@ int main()
     long frames = 0;
     bool done = false, redraw = true;
     unsigned char key[ALLEGRO_KEY_MAX];
-    int activate_easter_egg = 0, 
-        loadCounterX = 0, loadCounterY = 0, 
+    int activate_easter_egg = 0,
+        loadCounterX = 0, loadCounterY = 0,
         mapSizeX = 0, mapSizeY = 0;
     int map[MAP_H][MAP_W];
 
@@ -56,6 +58,13 @@ int main()
 
     al_start_timer(timer);
     hero_init(&hero);
+
+    /* if -n is passed, use the argument as the hero name */
+    if (argc == 3 && strcmp(argv[1], "-n") == 0)
+        strcpy(hero.name, argv[2]);
+    else
+        strcpy(hero.name, "Rockford");
+
     keyboard_init(key);
     sprites_init(&sprites);
 

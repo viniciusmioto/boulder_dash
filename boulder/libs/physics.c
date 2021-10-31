@@ -13,7 +13,6 @@ void hero_init(HERO *hero)
     hero->diamonds = 0;
     hero->win = false;
     hero->lose = false;
-    strcpy(hero->name, "nice");
 }
 
 /* Update map by boulder and diamond physics. Verify if the hero will survive */
@@ -50,7 +49,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
                         if (map[y + 1][x - 1] == EMPTY && map[y][x - 1] == EMPTY && !(y + 1 == hero->mapY && x - 1 == hero->mapX))
                         {
                             falling_distance++;
-                            /* if the object rolls and falls more than one tile, then Rockford will die */
+                            /* if the object rolls and falls in Rockford's head, we lose */
                             if (hero->mapY >= y + 1 && hero->mapX == x - 1 && falling_distance >= 1 && hero->direction != LEFT)
                             {
                                 game_over = true;
@@ -62,7 +61,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
                         else if (map[y + 1][x + 1] == EMPTY && map[y][x + 1] == EMPTY && !(y + 1 == hero->mapY && x + 1 == hero->mapX))
                         {
                             falling_distance++;
-                            /* if the object rolls and falls more than one tile, then Rockford will die */
+                            /* if the object rolls and falls in Rockford's head, we lose */
                             if (hero->mapY >= y + 1 && hero->mapX == x + 1 && falling_distance >= 1 && hero->direction != RIGHT)
                             {
                                 game_over = true;
@@ -226,7 +225,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         map[MAP_H - 6][MAP_W - 2] = 6;
 }
 
-/* check for a sequence of characters to activate a easteregg */
+/* Check for a sequence of characters to activate a easter egg */
 void verify_easter_egg(HERO *hero, unsigned char key[ALLEGRO_KEY_MAX])
 {
     if (key[ALLEGRO_KEY_R])
