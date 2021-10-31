@@ -13,11 +13,10 @@ void hero_init(HERO *hero)
     hero->diamonds = 0;
     hero->win = false;
     hero->lose = false;
-    strcpy(hero->name, "nice");
 }
 
 /* Update map by boulder and diamond physics. Verify if the hero will survive */
-void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
+void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
 {
     int y, x, falling_distance;
     bool game_over = false;
@@ -29,18 +28,18 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
         {
             for (x = 0; x < MAP_W; x++)
             {
-                if (map[y][x] == element)
+                if (map[y][x] == object)
                 {
                     /* object falling */
                     if (map[y + 1][x] == EMPTY && !(y + 1 == hero->mapY && x == hero->mapX))
                     {
                         falling_distance++;
                         /* if the boulder falls more than one tile, then Rockford will die */
-                        if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x) && falling_distance >= 1 && hero->direction != DOWN)
+                        if (hero->mapY >= y + 1 && hero->mapX == x && falling_distance >= 1 && hero->direction != DOWN)
                         {
                             game_over = true;
                         }
-                        map[y + 1][x] = element;
+                        map[y + 1][x] = object;
                         map[y][x] = EMPTY;
                     }
                     /* object rolling */
@@ -50,24 +49,24 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
                         if (map[y + 1][x - 1] == EMPTY && map[y][x - 1] == EMPTY && !(y + 1 == hero->mapY && x - 1 == hero->mapX))
                         {
                             falling_distance++;
-                            /* if the boulder rolls and falls more than one tile, then Rockford will die */
-                            if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x - 1) && falling_distance >= 1 && hero->direction != LEFT)
+                            /* if the object rolls and falls in Rockford's head, we lose */
+                            if (hero->mapY >= y + 1 && hero->mapX == x - 1 && falling_distance >= 1 && hero->direction != LEFT)
                             {
                                 game_over = true;
                             }
-                            map[y + 1][x - 1] = element;
+                            map[y + 1][x - 1] = object;
                             map[y][x] = EMPTY;
                         }
                         /* object rolling right */ 
                         else if (map[y + 1][x + 1] == EMPTY && map[y][x + 1] == EMPTY && !(y + 1 == hero->mapY && x + 1 == hero->mapX))
                         {
                             falling_distance++;
-                            /* if the boulder rolls and falls more than one tile, then Rockford will die */
-                            if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x + 1) && falling_distance >= 1 && hero->direction != RIGHT)
+                            /* if the object rolls and falls in Rockford's head, we lose */
+                            if (hero->mapY >= y + 1 && hero->mapX == x + 1 && falling_distance >= 1 && hero->direction != RIGHT)
                             {
                                 game_over = true;
                             }
-                            map[y + 1][x + 1] = element;
+                            map[y + 1][x + 1] = object;
                             map[y][x] = EMPTY;
                         }
                     }
@@ -226,7 +225,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         map[MAP_H - 6][MAP_W - 2] = 6;
 }
 
-/* check for a sequence of characters to activate a easteregg */
+/* Check for a sequence of characters to activate a easter egg */
 void verify_easter_egg(HERO *hero, unsigned char key[ALLEGRO_KEY_MAX])
 {
     if (key[ALLEGRO_KEY_R])
