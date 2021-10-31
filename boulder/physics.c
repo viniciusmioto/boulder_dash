@@ -3,6 +3,7 @@
 /* Initialize hero (Rockford) attributes */
 void hero_init(HERO *hero)
 {
+    hero->score = 0;
     hero->sourceX = 0;
     hero->sourceY = 0;
     hero->mapX = 3;
@@ -10,8 +11,9 @@ void hero_init(HERO *hero)
     hero->easteregg = 0;
     hero->direction = STOPPED;
     hero->diamonds = 0;
-    hero->won = false;
+    hero->win = false;
     hero->lose = false;
+    strcpy(hero->name, "nice");
 }
 
 /* Update map by boulder and diamond physics. Verify if the hero will survive */
@@ -127,11 +129,12 @@ bool object_collision(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
     case DIAMOND:
         /* hero has collected a diamond */
         hero->diamonds++;
+        hero->score += 10;
         map[y][x] = 0;
         return false;
     case EXIT:
         /* hero has reached the exit */
-        hero->won = true;
+        hero->win = true;
         map[y][x] = 0;
         return false;
     default:

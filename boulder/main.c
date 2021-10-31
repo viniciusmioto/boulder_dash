@@ -1,20 +1,37 @@
 #include "physics.h"
+#include "scores.h"
 
 int main()
 {
-    /* INIT */
+    /* -- INIT -- */
+
+    /* Structures */
     HERO hero;
     SPRITES sprites;
+    LinkedList scores_list;
+
+    /* Allegro Components */
+    ALLEGRO_FONT *font;
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_BITMAP *buffer = NULL;
     ALLEGRO_TIMER *timer = NULL;
     ALLEGRO_EVENT_QUEUE *queue = NULL;
+    ALLEGRO_EVENT event;
+
+    /* Read txt with Scores List */
+    init_list(&scores_list);
+    read_scores(&scores_list);
+
+    /* Game Variables */
     long frames = 0;
     bool done = false, redraw = true;
     unsigned char key[ALLEGRO_KEY_MAX];
-    int activate_easter_egg = 0, loadCounterX = 0, loadCounterY = 0, mapSizeX = 0, mapSizeY = 0;
+    int activate_easter_egg = 0, 
+        loadCounterX = 0, loadCounterY = 0, 
+        mapSizeX = 0, mapSizeY = 0;
     int map[MAP_H][MAP_W];
 
+    /* Init Allegro Components */
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
@@ -27,7 +44,6 @@ int main()
     disp_init(&display, &buffer);
 
     must_init(al_init_image_addon(), "image");
-
     must_init(al_init_primitives_addon(), "primitives");
 
     must_init(al_install_audio(), "audio");
@@ -38,8 +54,6 @@ int main()
     al_register_event_source(queue, al_get_display_event_source(display));
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
-    ALLEGRO_EVENT event;
-
     al_start_timer(timer);
     hero_init(&hero);
     keyboard_init(key);
@@ -48,7 +62,7 @@ int main()
     load_map("./resources/map.txt", map);
 
     /* MAIN LOOP */
-    while (!done && !hero.won)
+    while (!done)
     {
         al_wait_for_event(queue, &event);
 
@@ -57,8 +71,22 @@ int main()
         case ALLEGRO_EVENT_TIMER:
             move_hero(&hero, &sprites, key, event.timer.count, map);
             verify_easter_egg(&hero, key);
+
             if (key[ALLEGRO_KEY_ESCAPE])
+            /* restart game */
+            {
+                hero_init(&hero);
+                load_map("./resources/map.txt", map);
+            }
+            if (key[ALLEGRO_KEY_F1])
+            /* settings */
+            {
+                /* nothing to do */
+            }
+            if (key[ALLEGRO_KEY_Q])
+            {
                 done = true;
+            }
 
             redraw = true;
             frames++;
@@ -80,8 +108,24 @@ int main()
             al_clear_to_color(al_map_rgb(0, 0, 0));
 
             draw_map(map, &sprites, event.timer.count);
-            if (!hero.lose)
+
+            if (!hero.lose && !hero.win)
                 hero_draw(&hero, &sprites);
+            else
+            {
+                if (hero.lose)
+                {
+                    printf("You Lose!\n");
+                }
+                else if (hero.win)
+                {
+                    printf("You Win!\n");
+                }
+                save_score(&scores_list, hero.score, hero.name);
+                write_scores(scores_list);
+                hero.score = 0;
+                done = true;
+            }
 
             disp_post_draw(&display, &buffer);
             redraw = false;
@@ -92,6 +136,7 @@ int main()
     disp_deinit(&display, &buffer);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
+    deallocate_list(&scores_list);
 
     return 0;
 }
