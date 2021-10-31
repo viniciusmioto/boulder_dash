@@ -33,12 +33,12 @@ void deallocate_list(LinkedList *list)
 }
 
 /* Insere o elemento score no início da fila; Retorna 1 se a operação foi bem sucedida e zero caso contrário; */
-int insert_beggining(LinkedList *list, int value, char name[5])
+void insert_beggining(LinkedList *list, int value, char name[5])
 {
 	SCORES *new_score = malloc(sizeof(SCORES));
 
 	if (new_score == NULL)
-		return 0;
+		return;
 
 	new_score->value = value;
 	new_score->prev = NULL;
@@ -56,17 +56,15 @@ int insert_beggining(LinkedList *list, int value, char name[5])
 		list->head = new_score;
 		list->tail = new_score;
 	}
-
-	return 1;
 }
 
 /* Insere o elemento score no final da fila; Retorna 1 se a operação foi bem sucedida e zero caso contrário; */
-int insert_end(LinkedList *list, int value, char name[5])
+void insert_end(LinkedList *list, int value, char name[5])
 {
 	SCORES *new_score = malloc(sizeof(SCORES));
 
 	if (new_score == NULL)
-		return 0;
+		return;
 
 	if (empty_list(*list))
 	{
@@ -80,12 +78,11 @@ int insert_end(LinkedList *list, int value, char name[5])
 	new_score->prev = list->tail;
 	(list->tail)->next = new_score;
 	list->tail = new_score;
-	return 1;
 }
 
 /* Recebe uma fila, uma prioridade (score) e uma senha 
  * insere o elemento na fila, respeitando as prioridades */
-int save_score(LinkedList *list, int value, char name[5])
+void save_score(LinkedList *list, int value, char name[5])
 {
 	SCORES *curr;
 	SCORES *new_score = malloc(sizeof(SCORES));
@@ -105,7 +102,7 @@ int save_score(LinkedList *list, int value, char name[5])
 	}
 
 	if (new_score == NULL)
-		return 0;
+		return;
 
 	for (curr = list->head; curr->value >= value; curr = curr->next)
 		;
@@ -116,8 +113,6 @@ int save_score(LinkedList *list, int value, char name[5])
 	new_score->next = curr;
 	curr->prev = new_score;
 	(new_score->prev)->next = new_score;
-
-	return 1;
 }
 
 /* Read name and score from file and insert in order */
@@ -136,45 +131,6 @@ void read_scores(LinkedList *list)
 		save_score(list, score, name);
 
 	fclose(file);
-}
-
-/* Remove o primeiro elemento da fila. Retorna 1 se a operação foi bem sucedida e zero caso contrário; */
-int remove_first(LinkedList *list)
-{
-	if (empty_list(*list))
-		return 0;
-
-	SCORES *curr = list->head;
-
-	if (list->head->next == NULL)
-	{
-		deallocate_list(list);
-		return 1;
-	}
-
-	list->head = list->head->next;
-	list->head->prev = NULL;
-	curr->prev = NULL;
-	curr->next = NULL;
-	free(curr);
-	return 1;
-}
-
-/* Remove o último elemento da fila. Retorna 1 se a operação foi bem sucedida e zero caso contrário; */
-int remove_last_score(LinkedList *list, SCORES *score)
-{
-	if (empty_list(*list))
-		return 0;
-
-	if (score->prev != NULL)
-		score->prev->next = score->next;
-
-	if (score->next != NULL)
-		score->next->prev = score->prev;
-
-	list->tail = score->prev;
-	free(score);
-	return 1;
 }
 
 /* Overwrite scores file with the 10 best scores */

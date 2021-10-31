@@ -3,24 +3,35 @@
 
 int main()
 {
-    /* INIT */
+    /* -- INIT -- */
+
+    /* Structures */
     HERO hero;
     SPRITES sprites;
+    LinkedList scores_list;
+
+    /* Allegro Components */
     ALLEGRO_FONT *font;
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_BITMAP *buffer = NULL;
     ALLEGRO_TIMER *timer = NULL;
     ALLEGRO_EVENT_QUEUE *queue = NULL;
-    LinkedList scores_list;
+    ALLEGRO_EVENT event;
+
+    /* Read txt with Scores List */
     init_list(&scores_list);
     read_scores(&scores_list);
 
+    /* Game Variables */
     long frames = 0;
     bool done = false, redraw = true;
     unsigned char key[ALLEGRO_KEY_MAX];
-    int activate_easter_egg = 0, loadCounterX = 0, loadCounterY = 0, mapSizeX = 0, mapSizeY = 0;
+    int activate_easter_egg = 0, 
+        loadCounterX = 0, loadCounterY = 0, 
+        mapSizeX = 0, mapSizeY = 0;
     int map[MAP_H][MAP_W];
 
+    /* Init Allegro Components */
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
@@ -33,7 +44,6 @@ int main()
     disp_init(&display, &buffer);
 
     must_init(al_init_image_addon(), "image");
-
     must_init(al_init_primitives_addon(), "primitives");
 
     must_init(al_install_audio(), "audio");
@@ -43,8 +53,6 @@ int main()
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(display));
     al_register_event_source(queue, al_get_timer_event_source(timer));
-
-    ALLEGRO_EVENT event;
 
     al_start_timer(timer);
     hero_init(&hero);
@@ -63,7 +71,7 @@ int main()
         case ALLEGRO_EVENT_TIMER:
             move_hero(&hero, &sprites, key, event.timer.count, map);
             verify_easter_egg(&hero, key);
-            
+
             if (key[ALLEGRO_KEY_ESCAPE])
             /* restart game */
             {
@@ -128,6 +136,7 @@ int main()
     disp_deinit(&display, &buffer);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
+    deallocate_list(&scores_list);
 
     return 0;
 }
