@@ -21,8 +21,8 @@ typedef enum Direction
 
 typedef struct HERO
 {
-    int lives, sourceX, sourceY, easteregg, mapX, mapY, diamonds;
-    bool active, won, lose;
+    int sourceX, sourceY, easteregg, mapX, mapY, diamonds;
+    bool won, lose;
     ALLEGRO_BITMAP *sprites;
     Direction direction;
 } HERO;
