@@ -17,6 +17,7 @@
 #define BRICK 4
 #define DIAMOND 5
 #define EXIT 6
+#define EXPLOSION 7
 
 /* width and heigh dimensions */
 #define BUFFER_W 1280
@@ -50,6 +51,7 @@ typedef struct SPRITES
     ALLEGRO_BITMAP *wall;
     ALLEGRO_BITMAP *brick;
     ALLEGRO_BITMAP *exit;
+    ALLEGRO_BITMAP *explosion;
 } SPRITES;
 
 void must_init(bool test, const char *description);

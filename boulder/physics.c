@@ -3,23 +3,24 @@
 /* Initialize hero (Rockford) attributes */
 void hero_init(HERO *hero)
 {
-    hero->lives = 3;
     hero->sourceX = 0;
     hero->sourceY = 0;
     hero->mapX = 3;
     hero->mapY = 3;
     hero->easteregg = 0;
-    hero->active = false;
     hero->direction = STOPPED;
     hero->diamonds = 0;
     hero->won = false;
+    hero->lose = false;
 }
 
-/* gravity of boulder */
+/* Boulder and diamond physics */
 void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
 {
-    int y, x;
+    int y, x, falling_distance;
+    bool game_over = false;
 
+    falling_distance = 0;
     if (counter % 5 == 1)
     {
         for (y = 0; y < MAP_H; y++)
@@ -28,27 +29,58 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
             {
                 if (map[y][x] == element)
                 {
+                    /* object falling */
                     if (map[y + 1][x] == EMPTY && !(y + 1 == hero->mapY && x == hero->mapX))
                     {
+                        falling_distance++;
+                        if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x) && falling_distance >= 1 && hero->direction != DOWN)
+                        {
+                            game_over = true;
+                        }
                         map[y + 1][x] = element;
                         map[y][x] = EMPTY;
                     }
+                    /* object rolling left */
                     else if (map[y + 1][x] == element && map[y + 1][x - 1] == EMPTY && !(y + 1 == hero->mapY && x - 1 == hero->mapX))
                     {
+                        falling_distance++;
+                        if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x - 1) && falling_distance >= 1 && hero->direction != LEFT)
+                        {
+                            game_over = true;
+                        }
                         map[y + 1][x - 1] = element;
                         map[y][x] = EMPTY;
                     }
+                    /* object rolling right */
                     else if (map[y + 1][x] == element && map[y + 1][x + 1] == EMPTY && !(y + 1 == hero->mapY && x + 1 == hero->mapX))
                     {
+                        falling_distance++;
+                        if (map[y][x] == BOULDER && (hero->mapY >= y + 1 && hero->mapX == x + 1) && falling_distance >= 1 && hero->direction != RIGHT)
+
+                        {
+                            game_over = true;
+                        }
                         map[y + 1][x + 1] = element;
                         map[y][x] = EMPTY;
                     }
                 }
             }
         }
-    } 
-    else
-        return;
+    }
+
+    /* if the hero loses, then a explosion is created */
+    if (game_over)
+    {
+        /* here come the explosions */
+        for (y = hero->mapY - 1; y <= hero->mapY + 1; y++)
+        {
+            for (x = hero->mapX - 1; x <= hero->mapX + 1; x++)
+            {
+                map[y][x] = EXPLOSION;
+            }
+        }
+        hero->lose = true;
+    }
 }
 
 void push_boulder(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
@@ -94,9 +126,6 @@ bool object_collision(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
 /* Movements with arrow keys and animations with sprites */
 void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter, int map[MAP_H][MAP_W])
 {
-    /* activate means that the hero must be drawn again at the display */
-    hero->active = true;
-
     /* the counter delay allows us to make the animations and movements more fluidly */
     if (counter % 6 == 0)
     {
@@ -107,7 +136,10 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (!object_collision(hero, map, hero->mapX - 1, hero->mapY))
                 hero->mapX--;
             else
+            {
                 push_boulder(hero, map, hero->mapX - 1, hero->mapY);
+                hero->direction = STOPPED;
+            }
         }
         else if (key[ALLEGRO_KEY_RIGHT])
         {
@@ -115,29 +147,34 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
             if (!object_collision(hero, map, hero->mapX + 1, hero->mapY))
                 hero->mapX++;
             else
+            {
                 push_boulder(hero, map, hero->mapX + 1, hero->mapY);
+                hero->direction = STOPPED;
+            }
         }
         else if (key[ALLEGRO_KEY_UP])
         {
             hero->direction = UP;
             if (!object_collision(hero, map, hero->mapX, hero->mapY - 1))
                 hero->mapY--;
+            else
+                hero->direction = STOPPED;
         }
         else if (key[ALLEGRO_KEY_DOWN])
         {
             hero->direction = DOWN;
             if (!object_collision(hero, map, hero->mapX, hero->mapY + 1))
                 hero->mapY++;
+            else
+                hero->direction = STOPPED;
         }
         /* no key is pressed */
         else
             hero->direction = STOPPED;
 
         /* set sourceX and sourceY for the animations */
-        if (hero->active)
-            hero->sourceX += al_get_bitmap_width(sprites->hero) / 8;
-        else
-            hero->sourceX = 32;
+
+        hero->sourceX += al_get_bitmap_width(sprites->hero) / 8;
 
         if (hero->sourceX >= al_get_bitmap_width(sprites->hero))
             hero->sourceX = 0;
@@ -157,10 +194,10 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
     if (hero->mapY > MAP_H - 1)
         hero->mapY = MAP_H - 1;
 
+    /* check if the hero has collected all the diamonds */
     if (hero->diamonds >= 12)
+        /* open the door */
         map[MAP_H - 6][MAP_W - 2] = 6;
-
-    hero->active = false;
 }
 
 int verify_easter_egg(HERO *hero, unsigned char key[ALLEGRO_KEY_MAX])

@@ -51,6 +51,10 @@ void sprites_init(SPRITES *sprites)
     /* exit tile */
     sprites->exit = sprite_grab(sprites, 0, TILE_SIZE * 6, TILE_SIZE * 2, TILE_SIZE);
     must_init(sprites->exit, "sprites - exit");
+
+    /* exit tile */
+    sprites->explosion = sprite_grab(sprites, TILE_SIZE, 0 , TILE_SIZE, TILE_SIZE);
+    must_init(sprites->explosion, "sprites - explosion");
 }
 
 /* Free memory of sprites */
@@ -63,6 +67,8 @@ void sprites_deinit(SPRITES *sprites)
     al_destroy_bitmap(sprites->wall);
     al_destroy_bitmap(sprites->brick);
     al_destroy_bitmap(sprites->diamond);
+    al_destroy_bitmap(sprites->exit);
+    al_destroy_bitmap(sprites->explosion);
 }
 
 /* Initialize our display */
@@ -145,7 +151,6 @@ void load_map(const char *fileName, int map[23][40])
         exit(1);
     }
 
-    i = 0, j = 0;
     while ((c = fgetc(file)) != EOF)
     {
         if (c == '\n')
@@ -166,7 +171,6 @@ void load_map(const char *fileName, int map[23][40])
 void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites, int counter)
 {
     int i, j;
-
     for (i = i; i < 23; i++)
     {
         for (j = 0; j < 40; j++)
@@ -206,6 +210,12 @@ void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites, int counter)
                     al_draw_bitmap_region(sprites->exit, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
                 else
                     al_draw_bitmap_region(sprites->exit, TILE_SIZE * 2, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                break;
+            case EXPLOSION:
+                if (counter % 50 <= 25)
+                    al_draw_bitmap_region(sprites->explosion, 0, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
+                else
+                    al_draw_bitmap_region(sprites->explosion, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE, TILE_SIZE * j, TILE_SIZE * i, 0);
                 break;
             default:
                 break;
