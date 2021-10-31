@@ -45,7 +45,7 @@ int main()
     keyboard_init(key);
     sprites_init(&sprites);
 
-    load_map("map.txt", map);
+    load_map("./resources/map.txt", map);
 
     /* MAIN LOOP */
     while (!done && !hero.won)

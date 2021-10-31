@@ -42,7 +42,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
                         map[y][x] = EMPTY;
                     }
                     /* object rolling left */
-                    else if (map[y + 1][x] == element && map[y + 1][x - 1] == EMPTY && !(y + 1 == hero->mapY && x - 1 == hero->mapX))
+                    else if (map[y + 1][x] == element && map[y + 1][x - 1] == EMPTY && map[y][x - 1] == EMPTY && !(y + 1 == hero->mapY && x - 1 == hero->mapX))
                     {
                         falling_distance++;
                         /* if the boulder rolls and falls more than one tile, then Rockford will die */
@@ -54,7 +54,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int element, int counter)
                         map[y][x] = EMPTY;
                     }
                     /* object rolling right */
-                    else if (map[y + 1][x] == element && map[y + 1][x + 1] == EMPTY && !(y + 1 == hero->mapY && x + 1 == hero->mapX))
+                    else if (map[y + 1][x] == element && map[y + 1][x + 1] == EMPTY && map[y][x + 1] == EMPTY && !(y + 1 == hero->mapY && x + 1 == hero->mapX))
                     {
                         falling_distance++;
                         /* if the boulder rolls and falls more than one tile, then Rockford will die */

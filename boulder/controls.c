@@ -22,7 +22,7 @@ ALLEGRO_BITMAP *sprite_grab(SPRITES *sprites, int x, int y, int w, int h)
 void sprites_init(SPRITES *sprites)
 {
     /* Load the spritesheet with all the elements */
-    sprites->_spritesheet = al_load_bitmap("spritesheet.png");
+    sprites->_spritesheet = al_load_bitmap("./resources/spritesheet.png");
     must_init(sprites->_spritesheet, "map sprites");
 
     /* Rockford's movements and animations */
