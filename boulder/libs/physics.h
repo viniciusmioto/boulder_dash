@@ -35,7 +35,7 @@ void hero_init(HERO *hero);
 
 void hero_draw(HERO *hero, SPRITES *sprites);
 
-void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter, int map[23][40]);
+void move_hero(HERO *hero, SPRITES *sprites, SAMPLES *samples, unsigned char key[ALLEGRO_KEY_MAX], int counter, int map[23][40]);
 
 void verify_easter_egg(HERO *hero, unsigned char key[ALLEGRO_KEY_MAX]);
 

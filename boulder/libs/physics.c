@@ -16,7 +16,7 @@ void hero_init(HERO *hero)
 }
 
 /* Update map by boulder and diamond physics. Verify if the hero will survive */
-void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
+void update_map(HERO *hero, SAMPLES *samples, int map[MAP_H][MAP_W], int object, int counter)
 {
     int y, x, falling_distance;
     bool game_over = false;
@@ -38,9 +38,11 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
                         if (hero->mapY >= y + 1 && hero->mapX == x && falling_distance >= 1 && hero->direction != DOWN)
                         {
                             game_over = true;
+                            al_play_sample(samples->sound_explosion, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                         }
                         map[y + 1][x] = object;
                         map[y][x] = EMPTY;
+                        al_play_sample(samples->sound_boulder, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     }
                     /* object rolling */
                     else if (map[y + 1][x] == BOULDER || map[y + 1][x] == DIAMOND)
@@ -53,11 +55,13 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
                             if (hero->mapY >= y + 1 && hero->mapX == x - 1 && falling_distance >= 1 && hero->direction != LEFT)
                             {
                                 game_over = true;
+                                al_play_sample(samples->sound_explosion, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                             }
                             map[y + 1][x - 1] = object;
                             map[y][x] = EMPTY;
+                            al_play_sample(samples->sound_boulder, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                         }
-                        /* object rolling right */ 
+                        /* object rolling right */
                         else if (map[y + 1][x + 1] == EMPTY && map[y][x + 1] == EMPTY && !(y + 1 == hero->mapY && x + 1 == hero->mapX))
                         {
                             falling_distance++;
@@ -65,9 +69,11 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
                             if (hero->mapY >= y + 1 && hero->mapX == x + 1 && falling_distance >= 1 && hero->direction != RIGHT)
                             {
                                 game_over = true;
+                                al_play_sample(samples->sound_explosion, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                             }
                             map[y + 1][x + 1] = object;
                             map[y][x] = EMPTY;
+                            al_play_sample(samples->sound_boulder, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                         }
                     }
                 }
@@ -86,6 +92,7 @@ void update_map(HERO *hero, int map[MAP_H][MAP_W], int object, int counter)
                 map[y][x] = EXPLOSION;
             }
         }
+
         hero->lose = true;
     }
 }
@@ -108,7 +115,7 @@ void push_boulder(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
 }
 
 /* It detects collision between hero and map objects */
-bool object_collision(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
+bool object_collision(HERO *hero, SAMPLES *samples, int map[MAP_H][MAP_W], int x, int y)
 {
     switch (map[y][x])
     {
@@ -116,6 +123,7 @@ bool object_collision(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
         return false;
     case DIRT:
         /* dirty goes away */
+        al_play_sample(samples->sound_dirt, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
         map[y][x] = 0;
         return false;
     case WALL:
@@ -131,12 +139,14 @@ bool object_collision(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
             return true;
     case DIAMOND:
         /* hero has collected a diamond */
+        al_play_sample(samples->sound_diamond, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
         hero->diamonds++;
         hero->score += 10;
         map[y][x] = 0;
         return false;
     case EXIT:
         /* hero has reached the exit */
+        al_play_sample(samples->sound_exit, 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
         hero->win = true;
         map[y][x] = 0;
         return false;
@@ -146,7 +156,7 @@ bool object_collision(HERO *hero, int map[MAP_H][MAP_W], int x, int y)
 }
 
 /* Movements with arrow keys and animations with sprites */
-void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX], int counter, int map[MAP_H][MAP_W])
+void move_hero(HERO *hero, SPRITES *sprites, SAMPLES *samples, unsigned char key[ALLEGRO_KEY_MAX], int counter, int map[MAP_H][MAP_W])
 {
     /* the counter delay allows us to make the animations and movements more fluidly */
     if (counter % 6 == 0)
@@ -155,7 +165,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         if (key[ALLEGRO_KEY_LEFT])
         {
             hero->direction = LEFT;
-            if (!object_collision(hero, map, hero->mapX - 1, hero->mapY))
+            if (!object_collision(hero, samples, map, hero->mapX - 1, hero->mapY))
                 hero->mapX--;
             else
             {
@@ -167,7 +177,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         else if (key[ALLEGRO_KEY_RIGHT])
         {
             hero->direction = RIGHT;
-            if (!object_collision(hero, map, hero->mapX + 1, hero->mapY))
+            if (!object_collision(hero, samples, map, hero->mapX + 1, hero->mapY))
                 hero->mapX++;
             else
             {
@@ -179,7 +189,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         else if (key[ALLEGRO_KEY_UP])
         {
             hero->direction = UP;
-            if (!object_collision(hero, map, hero->mapX, hero->mapY - 1))
+            if (!object_collision(hero, samples, map, hero->mapX, hero->mapY - 1))
                 hero->mapY--;
             else
                 hero->direction = STOPPED;
@@ -187,7 +197,7 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         else if (key[ALLEGRO_KEY_DOWN])
         {
             hero->direction = DOWN;
-            if (!object_collision(hero, map, hero->mapX, hero->mapY + 1))
+            if (!object_collision(hero, samples, map, hero->mapX, hero->mapY + 1))
                 hero->mapY++;
             else
                 hero->direction = STOPPED;
@@ -205,8 +215,8 @@ void move_hero(HERO *hero, SPRITES *sprites, unsigned char key[ALLEGRO_KEY_MAX],
         hero->sourceY = hero->direction;
 
         /* update map after hero movement */
-        update_map(hero, map, DIAMOND, counter);
-        update_map(hero, map, BOULDER, counter);
+        update_map(hero, samples, map, DIAMOND, counter);
+        update_map(hero, samples, map, BOULDER, counter);
     }
 
     /* check if the hero is inside the map */

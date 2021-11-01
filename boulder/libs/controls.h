@@ -2,6 +2,7 @@
 #define __DISPLAY__
 
 #include <stdio.h>
+#include <math.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
@@ -54,6 +55,15 @@ typedef struct SPRITES
     ALLEGRO_BITMAP *explosion;
 } SPRITES;
 
+typedef struct SAMPLES
+{
+    ALLEGRO_SAMPLE *sound_dirt;
+    ALLEGRO_SAMPLE *sound_boulder;
+    ALLEGRO_SAMPLE *sound_explosion;
+    ALLEGRO_SAMPLE *sound_diamond;
+    ALLEGRO_SAMPLE *sound_exit;
+} SAMPLES;
+
 void must_init(bool test, const char *description);
 
 void sprites_init(SPRITES *sprites);
@@ -75,5 +85,11 @@ void keyboard_update(ALLEGRO_EVENT *event, unsigned char *key);
 void load_map(const char *fileName, int map[23][40]);
 
 void draw_map(int map[23][40], SPRITES *sprites, int counter);
+
+void hud_draw(ALLEGRO_FONT *font, long count_down, long score);
+
+void samples_init(SAMPLES *samples);
+
+void samples_deinit(SAMPLES *samples);
 
 #endif
