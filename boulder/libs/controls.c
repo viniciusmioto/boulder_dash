@@ -54,7 +54,7 @@ void sprites_init(SPRITES *sprites)
     must_init(sprites->exit, "sprites - exit");
 
     /* exit tile */
-    sprites->explosion = sprite_grab(sprites, TILE_SIZE, 0 , TILE_SIZE, TILE_SIZE);
+    sprites->explosion = sprite_grab(sprites, TILE_SIZE, 0, TILE_SIZE, TILE_SIZE);
     must_init(sprites->explosion, "sprites - explosion");
 }
 
@@ -227,11 +227,6 @@ void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites, int counter)
     }
 }
 
-int count_down(int counter)
-{
-    return floor(150 - counter);
-}
-
 void hud_draw(ALLEGRO_FONT *font, long count_down, long score)
 {
     al_draw_textf(
@@ -247,4 +242,22 @@ void hud_draw(ALLEGRO_FONT *font, long count_down, long score)
         (DISP_W - TILE_SIZE * 6), TILE_SIZE / 2,
         ALLEGRO_ALIGN_CENTER,
         "SCORE: %06ld", score);
+}
+
+void samples_init(SAMPLES *samples)
+{
+    samples->sound_dirt = al_load_sample("./resources/dirt.wav");
+    samples->sound_boulder = al_load_sample("./resources/boulder.wav");
+    samples->sound_explosion = al_load_sample("./resources/explosion.wav");
+    samples->sound_diamond = al_load_sample("./resources/diamond.wav");
+    samples->sound_exit = al_load_sample("./resources/exit.wav");
+}
+
+void samples_deinit(SAMPLES *samples)
+{
+    al_destroy_sample(samples->sound_dirt);
+    al_destroy_sample(samples->sound_boulder);
+    al_destroy_sample(samples->sound_explosion);
+    al_destroy_sample(samples->sound_diamond);
+    al_destroy_sample(samples->sound_exit);
 }

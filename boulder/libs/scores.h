@@ -1,3 +1,6 @@
+#ifndef __SCORES__
+#define __SCORES__
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,3 +33,5 @@ void save_score(LinkedList *list, int value, char name[25]);
 void read_scores(LinkedList *list);
 
 void write_scores(LinkedList list);
+
+#endif

@@ -8,17 +8,16 @@ int main(int argc, char **argv)
     /* Structures */
     HERO hero;
     SPRITES sprites;
+    SAMPLES samples;
     LinkedList scores_list;
 
     /* Allegro Components */
-    ALLEGRO_FONT *font;
+    ALLEGRO_FONT *font = NULL;
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_BITMAP *buffer = NULL;
     ALLEGRO_TIMER *timer = NULL;
     ALLEGRO_EVENT_QUEUE *queue = NULL;
     ALLEGRO_EVENT event;
-
-    char name[25];
 
     /* Read txt with Scores List */
     init_list(&scores_list);
@@ -32,6 +31,7 @@ int main(int argc, char **argv)
         loadCounterX = 0, loadCounterY = 0,
         mapSizeX = 0, mapSizeY = 0;
     int map[MAP_H][MAP_W];
+    char name[25];
 
     /* Init Allegro Components */
     must_init(al_init(), "allegro");
@@ -62,6 +62,9 @@ int main(int argc, char **argv)
     al_start_timer(timer);
     hero_init(&hero);
 
+    samples_init(&samples);
+    al_reserve_samples(3);
+
     /* if -n is passed, use the argument as the hero name */
     if (argc == 3 && strcmp(argv[1], "-n") == 0)
         strcpy(hero.name, argv[2]);
@@ -81,7 +84,7 @@ int main(int argc, char **argv)
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
-            move_hero(&hero, &sprites, key, event.timer.count, map);
+            move_hero(&hero, &sprites, &samples, key, event.timer.count, map);
             verify_easter_egg(&hero, key);
 
             if (key[ALLEGRO_KEY_ESCAPE])
@@ -176,6 +179,7 @@ int main(int argc, char **argv)
     al_destroy_font(font);
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
+    samples_deinit(&samples);
     deallocate_list(&scores_list);
 
     return 0;
