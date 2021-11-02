@@ -92,7 +92,6 @@ void update_map(HERO *hero, SAMPLES *samples, int map[MAP_H][MAP_W], int object,
                 map[y][x] = EXPLOSION;
             }
         }
-
         hero->lose = true;
     }
 }
