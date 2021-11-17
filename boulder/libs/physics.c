@@ -1,3 +1,5 @@
+/* Aluno: Vinicius Mioto. GRR20203931 */
+
 #include "physics.h"
 
 /* Initialize hero (Rockford) attributes */

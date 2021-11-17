@@ -52,6 +52,4 @@ Mkfile.old
 dkms.conf
 
 # Local files
-/boulder/tutorial
-/boulder/boulderdash
-/boulder/resources/scores.txt
+./boulder/resources/scores.txt

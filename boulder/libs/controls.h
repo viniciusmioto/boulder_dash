@@ -1,5 +1,5 @@
-#ifndef __DISPLAY__
-#define __DISPLAY__
+#ifndef __CONTROLS__
+#define __CONTROLS__
 
 #include <stdio.h>
 #include <math.h>

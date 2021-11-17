@@ -1,3 +1,5 @@
+/* Aluno: Vinicius Mioto. GRR20203931 */
+
 #include "./libs/physics.h"
 #include "./libs/scores.h"
 
@@ -25,13 +27,9 @@ int main(int argc, char **argv)
 
     /* Game Variables */
     long frames = 0;
-    bool done = false, redraw = true;
+    bool done = false, redraw = true, info_screen = false;
     unsigned char key[ALLEGRO_KEY_MAX];
-    int activate_easter_egg = 0,
-        loadCounterX = 0, loadCounterY = 0,
-        mapSizeX = 0, mapSizeY = 0;
-    int map[MAP_H][MAP_W];
-    char name[25];
+    int counter = 0, map[MAP_H][MAP_W];
 
     /* Init Allegro Components */
     must_init(al_init(), "allegro");
@@ -80,12 +78,25 @@ int main(int argc, char **argv)
     while (!done)
     {
         al_wait_for_event(queue, &event);
-
+        counter = (150 - event.timer.count / 60);
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
             move_hero(&hero, &sprites, &samples, key, event.timer.count, map);
             verify_easter_egg(&hero, key);
+
+             if (!info_screen && (key[ALLEGRO_KEY_F1] || key[ALLEGRO_KEY_H]))
+            /* info */
+            {
+                info_screen = true;
+                al_show_native_message_box(
+                    display,
+                    "BOULDER DASH!",
+                    "Use the ARROW KEYS to move Rockford",
+                    "Developed by Vinicius Mioto - UFPR 2021",
+                    NULL,
+                    ALLEGRO_MESSAGEBOX_QUESTION);
+            }
 
             if (key[ALLEGRO_KEY_ESCAPE])
             /* restart game */
@@ -100,9 +111,13 @@ int main(int argc, char **argv)
                     al_resume_timer(timer);
                 }
             }
+
             if (key[ALLEGRO_KEY_Q])
             {
+                /* quit game */
                 done = true;
+                done = true;
+                break;
             }
 
             redraw = true;
@@ -125,9 +140,9 @@ int main(int argc, char **argv)
             al_clear_to_color(al_map_rgb(0, 0, 0));
 
             draw_map(map, &sprites, event.timer.count);
-            hud_draw(font, 150 - event.timer.count / 60, hero.score);
+            hud_draw(font, counter, hero.score);
 
-            if (hero.lose || (150 - event.timer.count / 60) <= 0)
+            if (hero.lose || counter <= 0)
             {
                 al_draw_text(
                     font,
@@ -167,22 +182,12 @@ int main(int argc, char **argv)
             else
                 hero_draw(&hero, &sprites);
 
-            if (key[ALLEGRO_KEY_F1] || key[ALLEGRO_KEY_H])
-            /* info */
-            {
-                al_show_native_message_box(
-                    display,
-                    "BOULDER DASH!",
-                    "Use the ARROW KEYS to move Rockford",
-                    "Developed by Vinicius Mioto - UFPR 2021",
-                    NULL,
-                    ALLEGRO_MESSAGEBOX_QUESTION);
-            }
-
             disp_post_draw(&display, &buffer);
             redraw = false;
         }
     }
+    
+    print_scores(scores_list);
 
     sprites_deinit(&sprites);
     disp_deinit(&display, &buffer);

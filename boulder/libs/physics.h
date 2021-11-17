@@ -1,5 +1,5 @@
-#ifndef __CONTROLS__
-#define __CONTROLS__
+#ifndef __PHYSICS__
+#define __PHYSICS__
 
 #include "controls.h"
 

@@ -34,4 +34,6 @@ void read_scores(LinkedList *list);
 
 void write_scores(LinkedList list);
 
+void print_scores(LinkedList list);
+
 #endif

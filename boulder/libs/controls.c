@@ -1,3 +1,5 @@
+/* Aluno: Vinicius Mioto. GRR20203931 */
+
 #include "controls.h"
 /* ** All the following functions with the (AL) label are designed and recommended by the Allegro tutorial ** */
 
@@ -111,7 +113,7 @@ void disp_post_draw(ALLEGRO_DISPLAY **display, ALLEGRO_BITMAP **buffer)
 /* (AL) Initialize the keyboard */
 void keyboard_init(unsigned char *key)
 {
-    memset(key, 0, sizeof(key));
+    memset(key, 0, sizeof(*key));
 }
 
 /* (AL) Check for events updates with the keyboard (Allegro Template Function) */
@@ -174,7 +176,7 @@ void load_map(const char *fileName, int map[23][40])
 void draw_map(int map[MAP_H][MAP_W], SPRITES *sprites, int counter)
 {
     int i, j;
-    for (i = i; i < 23; i++)
+    for (i = 0; i < 23; i++)
     {
         for (j = 0; j < 40; j++)
         {

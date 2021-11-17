@@ -153,3 +153,18 @@ void write_scores(LinkedList list)
 
 	fclose(file);
 }
+
+/* print the top 10 scores */
+void print_scores(LinkedList list)
+{
+	SCORES *curr;
+	int i = 0;
+
+	printf("SCORES\n");
+	for (curr = list.head; curr != NULL && i < 10; curr = curr->next)
+	{
+		printf("%d. %s %d\n", i + 1, curr->name, curr->value);
+		i++;
+	}
+	printf("\n");
+}
