@@ -1,5 +1,7 @@
 # BOULDER DASH
 
+![boulder dash](game.png)
+
 ## START INSTRUCTIONS
 
 ### Basic Start
